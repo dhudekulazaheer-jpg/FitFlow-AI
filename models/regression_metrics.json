@@ -1,0 +1,14 @@
+[
+    {
+        "model": "Mean Baseline",
+        "MAE": 231.2,
+        "RMSE": 288.92,
+        "R2": -0.0006
+    },
+    {
+        "model": "Random Forest",
+        "MAE": 85.16,
+        "RMSE": 108.0,
+        "R2": 0.8602
+    }
+]

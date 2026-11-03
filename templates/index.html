@@ -1,0 +1,844 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FitFlow AI - Your personalized yoga and fitness planner">
+    <title>FitFlow AI | Your Wellness Journey</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+    <header class="navbar">
+
+        <button
+            class="menu-toggle"
+            id="menuToggle"
+            type="button"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="sidebar"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <a href="/" class="logo">
+            <span class="logo-icon">✦</span>
+            <span>FitFlow<span class="logo-ai"> AI</span></span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#planner">Create Plan</a>
+            <a href="#about">About</a>
+        </nav>
+
+        <a href="#planner" class="nav-button">Get Started ↗</a>
+
+    </header>
+
+
+    <!-- SIDEBAR OVERLAY -->
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+        hidden
+    ></div>
+
+
+    <!-- SIDEBAR -->
+    <aside
+        class="sidebar"
+        id="sidebar"
+        aria-hidden="true"
+        inert
+    >
+
+        <div class="sidebar-header">
+
+            <a href="/" class="logo">
+                <span class="logo-icon">✦</span>
+                <span>FitFlow<span class="logo-ai"> AI</span></span>
+            </a>
+
+            <button
+                type="button"
+                class="sidebar-close"
+                id="closeSidebar"
+                aria-label="Close menu"
+            >
+                &times;
+            </button>
+
+        </div>
+
+        <p class="sidebar-label">YOUR FITNESS SPACE</p>
+
+        <nav class="sidebar-menu">
+
+            <button
+                type="button"
+                class="sidebar-link"
+                data-view="plans"
+            >
+                <span class="sidebar-icon">▤</span>
+                <span>Previously Generated Plans</span>
+            </button>
+
+            <button
+                type="button"
+                class="sidebar-link"
+                data-view="history"
+            >
+                <span class="sidebar-icon">◷</span>
+                <span>History</span>
+            </button>
+
+            <button
+                type="button"
+                class="sidebar-link"
+                data-view="bmi"
+            >
+                <span class="sidebar-icon">▦</span>
+                <span>BMI Calculator</span>
+            </button>
+
+            <button
+                type="button"
+                class="sidebar-link"
+                data-view="profile"
+            >
+                <span class="sidebar-icon">♙</span>
+                <span>Profile</span>
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <span>✦</span> Build a healthier you
+        </div>
+
+    </aside>
+
+
+    <main>
+
+        <!-- HERO SECTION -->
+        <section class="hero" id="home">
+
+            <div class="hero-content">
+
+                <span class="eyebrow">
+                    ✨ YOUR PERSONAL WELLNESS COMPANION
+                </span>
+
+                <h1>
+                    Find Your Flow.<br>
+                    <span>Feel Your Best.</span>
+                </h1>
+
+                <p>
+                    Your fitness journey deserves a plan as unique as you.
+                    Create personalized yoga and workout routines with
+                    the power of AI.
+                </p>
+
+                <a href="#planner" class="primary-button">
+                    Create Your Fitness Plan <span>→</span>
+                </a>
+
+                <div class="hero-features">
+
+                    <div>
+                        <strong>01</strong>
+                        <span>Personalized plans</span>
+                    </div>
+
+                    <div>
+                        <strong>02</strong>
+                        <span>Yoga & workouts</span>
+                    </div>
+
+                    <div>
+                        <strong>03</strong>
+                        <span>AI-powered guidance</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-visual">
+
+                <div class="hero-image">
+                    <img
+                        src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1000&q=85"
+                        alt="Woman practising yoga"
+                    >
+                </div>
+
+                <div class="floating-card floating-top">
+                    <span class="floating-icon">🌿</span>
+                    <div>
+                        <strong>Find your balance</strong>
+                        <small>Mind · Body · Wellness</small>
+                    </div>
+                </div>
+
+                <div class="floating-card floating-bottom">
+                    <span class="floating-icon">✦</span>
+                    <div>
+                        <strong>Your journey, your pace</strong>
+                        <small>Designed around your goals</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PLANNER SECTION -->
+        <section class="planner-section" id="planner">
+
+            <div class="section-heading">
+
+                <span class="eyebrow">LET'S GET STARTED</span>
+
+                <h2>Create Your <span>Personal Plan</span></h2>
+
+                <p>
+                    Tell us about your fitness preferences.
+                    We'll build a plan that fits your lifestyle.
+                </p>
+
+            </div>
+
+
+            <div class="planner-card">
+
+                <form id="planForm">
+
+                    <!-- PLAN TYPE -->
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            01. What would you like to focus on?
+                        </label>
+
+                        <div class="plan-options">
+
+                            <label class="plan-option">
+                                <input
+                                    type="radio"
+                                    name="plan_type"
+                                    value="yoga"
+                                >
+
+                                <span class="option-card">
+                                    <span class="option-icon">🧘</span>
+                                    <strong>Yoga</strong>
+                                    <small>Flexibility & balance</small>
+                                </span>
+                            </label>
+
+
+                            <label class="plan-option">
+                                <input
+                                    type="radio"
+                                    name="plan_type"
+                                    value="workout"
+                                >
+
+                                <span class="option-card">
+                                    <span class="option-icon">💪</span>
+                                    <strong>Workout</strong>
+                                    <small>Strength & fitness</small>
+                                </span>
+                            </label>
+
+
+                            <label class="plan-option">
+                                <input
+                                    type="radio"
+                                    name="plan_type"
+                                    value="both"
+                                    checked
+                                >
+
+                                <span class="option-card">
+                                    <span class="option-icon">⚡</span>
+                                    <strong>Both</strong>
+                                    <small>A complete routine</small>
+                                </span>
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FITNESS GOAL -->
+                    <div class="form-group">
+
+                        <label
+                            for="goal"
+                            class="form-label"
+                        >
+                            02. What is your fitness goal?
+                        </label>
+
+                        <select id="goal" name="goal" required>
+
+                            <option value="general_fitness">
+                                General Fitness
+                            </option>
+
+                            <option value="weight_loss">
+                                Weight Loss
+                            </option>
+
+                            <option value="muscle_building">
+                                Muscle Building
+                            </option>
+
+                            <option value="flexibility">
+                                Flexibility
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FITNESS LEVEL -->
+                    <div class="form-group">
+
+                        <label
+                            for="fitness_level"
+                            class="form-label"
+                        >
+                            03. Select your experience level
+                        </label>
+
+                        <select
+                            id="fitness_level"
+                            name="fitness_level"
+                            required
+                        >
+
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DURATION -->
+                    <div class="form-group">
+
+                        <label
+                            for="duration"
+                            class="form-label"
+                        >
+                            04. How much time can you spend?
+                        </label>
+
+                        <select
+                            id="duration"
+                            name="duration"
+                            required
+                        >
+
+                            <option value="15">15 Minutes</option>
+                            <option value="30" selected>30 Minutes</option>
+                            <option value="45">45 Minutes</option>
+                            <option value="60">60 Minutes</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- EQUIPMENT -->
+                    <div class="form-group">
+
+                        <label
+                            for="equipment"
+                            class="form-label"
+                        >
+                            05. What equipment do you have?
+                        </label>
+
+                        <select
+                            id="equipment"
+                            name="equipment"
+                            required
+                        >
+
+                            <option value="none">No Equipment</option>
+                            <option value="basic">Basic Equipment</option>
+                            <option value="full_gym">Full Gym Access</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- BODY PART -->
+                    <div class="form-group">
+
+                        <label
+                            for="body_part"
+                            class="form-label"
+                        >
+                            06. Target body part
+                            <span class="optional-label">(Optional)</span>
+                        </label>
+
+                        <select id="body_part" name="body_part">
+
+                            <option value="">Full Body</option>
+                            <option value="chest">Chest</option>
+                            <option value="back">Back</option>
+                            <option value="shoulders">Shoulders</option>
+                            <option value="arms">Arms</option>
+                            <option value="legs">Legs</option>
+                            <option value="waist">Waist</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        id="generateBtn"
+                        class="generate-button"
+                    >
+                        Generate My Fitness Plan <span>✦</span>
+                    </button>
+
+                    <p class="form-note">
+                        ✦ Your personalized plan will be generated using FitFlow AI.
+                    </p>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- RESULTS SECTION -->
+        <section
+            class="results-section"
+            id="results"
+            hidden
+        >
+
+            <div class="section-heading">
+
+                <span class="eyebrow">
+                    YOUR PERSONALIZED ROUTINE
+                </span>
+
+                <h2>Your Fitness <span>Plan</span></h2>
+
+                <p>
+                    Your routine is ready.
+                    Let's make every movement count.
+                </p>
+
+            </div>
+
+            <div
+                id="planSummary"
+                class="plan-summary"
+            ></div>
+
+            <div
+                id="planContent"
+                class="plan-content"
+            ></div>
+
+        </section>
+
+
+        <!-- UTILITY VIEWS -->
+        <section
+            class="utility-section"
+            id="utilityViews"
+            hidden
+        >
+
+            <!-- PREVIOUSLY GENERATED PLANS -->
+            <div
+                class="utility-view"
+                id="plansView"
+                hidden
+            >
+
+                <div class="section-heading">
+
+                    <span class="eyebrow">YOUR FITNESS JOURNEY</span>
+
+                    <h2>Previously Generated <span>Plans</span></h2>
+
+                    <p>
+                        View and reopen your saved fitness plans.
+                    </p>
+
+                </div>
+
+                <div
+                    class="utility-content"
+                    id="savedPlansContent"
+                ></div>
+
+            </div>
+
+
+            <!-- HISTORY -->
+            <div
+                class="utility-view"
+                id="historyView"
+                hidden
+            >
+
+                <div class="section-heading">
+
+                    <span class="eyebrow">YOUR ACTIVITY</span>
+
+                    <h2>Plan <span>History</span></h2>
+
+                    <p>
+                        Keep track of your previously generated routines.
+                    </p>
+
+                </div>
+
+                <div
+                    class="utility-content"
+                    id="historyContent"
+                ></div>
+
+            </div>
+
+
+            <!-- BMI CALCULATOR -->
+            <div
+                class="utility-view"
+                id="bmiView"
+                hidden
+            >
+
+                <div class="section-heading">
+
+                    <span class="eyebrow">HEALTH CHECK</span>
+
+                    <h2>BMI <span>Calculator</span></h2>
+
+                    <p>
+                        Calculate your Body Mass Index using your height and weight.
+                    </p>
+
+                </div>
+
+
+                <div class="utility-card">
+
+                    <form id="bmiForm">
+
+                        <div class="utility-form-group">
+
+                            <label for="bmiHeight">
+                                Height (cm)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="bmiHeight"
+                                min="1"
+                                step="0.1"
+                                required
+                                placeholder="Enter height in cm"
+                            >
+
+                        </div>
+
+
+                        <div class="utility-form-group">
+
+                            <label for="bmiWeight">
+                                Weight (kg)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="bmiWeight"
+                                min="1"
+                                step="0.1"
+                                required
+                                placeholder="Enter weight in kg"
+                            >
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="generate-button"
+                        >
+                            Calculate BMI
+                        </button>
+
+                    </form>
+
+                    <div
+                        id="bmiResult"
+                        class="utility-result"
+                        hidden
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROFILE -->
+            <div
+                class="utility-view"
+                id="profileView"
+                hidden
+            >
+
+                <div class="section-heading">
+
+                    <span class="eyebrow">PERSONAL DETAILS</span>
+
+                    <h2>Your <span>Profile</span></h2>
+
+                    <p>
+                        Manage your fitness information and preferences.
+                    </p>
+
+                </div>
+
+
+                <div class="utility-card">
+
+                    <form id="profileForm">
+
+                        <div class="utility-form-group">
+
+                            <label for="profileName">Name</label>
+
+                            <input
+                                type="text"
+                                id="profileName"
+                                name="name"
+                                placeholder="Enter your name"
+                            >
+
+                        </div>
+
+
+                        <div class="utility-form-group">
+
+                            <label for="profileAge">Age</label>
+
+                            <input
+                                type="number"
+                                id="profileAge"
+                                name="age"
+                                min="1"
+                                placeholder="Enter your age"
+                            >
+
+                        </div>
+
+
+                        <div class="utility-form-group">
+
+                            <label for="profileHeight">
+                                Height (cm)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="profileHeight"
+                                name="height"
+                                min="1"
+                                step="0.1"
+                                placeholder="Enter height"
+                            >
+
+                        </div>
+
+
+                        <div class="utility-form-group">
+
+                            <label for="profileWeight">
+                                Weight (kg)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="profileWeight"
+                                name="weight"
+                                min="1"
+                                step="0.1"
+                                placeholder="Enter weight"
+                            >
+
+                        </div>
+
+
+                        <div class="utility-form-group">
+
+                            <label for="profileGoal">
+                                Fitness Goal
+                            </label>
+
+                            <select
+                                id="profileGoal"
+                                name="fitness_goal"
+                            >
+
+                                <option value="general_fitness">
+                                    General Fitness
+                                </option>
+
+                                <option value="weight_loss">
+                                    Weight Loss
+                                </option>
+
+                                <option value="muscle_gain">
+                                    Muscle Gain
+                                </option>
+
+                                <option value="flexibility">
+                                    Flexibility
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="utility-form-group">
+
+                            <label for="profileLevel">
+                                Fitness Level
+                            </label>
+
+                            <select
+                                id="profileLevel"
+                                name="fitness_level"
+                            >
+
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+
+                            </select>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="generate-button"
+                        >
+                            Save Profile
+                        </button>
+
+                        <p
+                            id="profileMessage"
+                            class="utility-message"
+                            aria-live="polite"
+                        ></p>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ABOUT SECTION -->
+        <section class="about-section" id="about">
+
+            <span class="eyebrow">THE FITFLOW APPROACH</span>
+
+            <h2>Small Steps.<br><span>Stronger You.</span></h2>
+
+            <p>
+                FitFlow AI combines personalized yoga and workout
+                recommendations to help you build a consistent fitness
+                routine at your own pace.
+            </p>
+
+            <div class="about-features">
+
+                <div>
+                    <span>🌱</span>
+                    <strong>Personalized</strong>
+                    <small>Plans based on your goals</small>
+                </div>
+
+                <div>
+                    <span>🧘</span>
+                    <strong>Balanced</strong>
+                    <small>Yoga and fitness together</small>
+                </div>
+
+                <div>
+                    <span>✦</span>
+                    <strong>Intelligent</strong>
+                    <small>AI-assisted recommendations</small>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <a href="/" class="logo">
+            <span class="logo-icon">✦</span>
+            <span>FitFlow<span class="logo-ai"> AI</span></span>
+        </a>
+
+        <p>Move better. Feel better. Live better.</p>
+
+        <small>© 2026 FitFlow AI. All rights reserved.</small>
+
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

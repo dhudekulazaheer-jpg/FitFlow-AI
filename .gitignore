@@ -1,0 +1,13 @@
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+.vscode/
+*.log
+.DS_Store
+Thumbs.db
+
+# User-generated personal data
+data/*.json

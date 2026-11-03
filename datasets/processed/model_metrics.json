@@ -1,0 +1,15 @@
+{
+    "algorithm": "Random Forest Classifier",
+    "training_records": 778,
+    "testing_records": 195,
+    "accuracy": 0.18974358974358974,
+    "precision_macro": 0.18560929875154186,
+    "recall_macro": 0.18819630124777184,
+    "f1_score_macro": 0.1854872545763273,
+    "classes": [
+        "Cardio",
+        "HIIT",
+        "Strength",
+        "Yoga"
+    ]
+}

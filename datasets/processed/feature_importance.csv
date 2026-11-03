@@ -1,0 +1,13 @@
+feature,importance,importance_percentage
+numerical__session_duration_hours,0.8675922012745362,86.76
+numerical__age,0.0394659089045581,3.95
+numerical__weight_kg,0.02952980963551595,2.95
+numerical__height_m,0.025139245375033193,2.51
+categorical__gender_Male,0.009484502498346828,0.95
+categorical__gender_Female,0.008816257182222485,0.88
+numerical__workout_frequency_days_week,0.004672080517594548,0.47
+categorical__workout_type_Strength,0.0038169223788837203,0.38
+categorical__workout_type_Yoga,0.003310601903753668,0.33
+categorical__workout_type_HIIT,0.0032636437384282197,0.33
+numerical__experience_level,0.002609781134962058,0.26
+categorical__workout_type_Cardio,0.002299045456165036,0.23
