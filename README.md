@@ -114,23 +114,13 @@ python test_advanced_features.py
 
 ---
 
-## 👥 Team Collaboration & Contributions
+## 👥 Contributors & Credits
 
-FitFlow AI is the result of collaborative engineering—originating from foundational domain research and prototype architecture, followed by full-scale enterprise modernization, clinical safety systems, and interactive feature engineering.
+* **Rajesh** ([@rajesh4275](https://github.com/rajesh4275)) – **Original Project Creator & Lead Architect**  
+  Conceived FitFlow AI and built the foundational datasets, plan generator algorithms, and core prototype.
 
-### 🌟 Rajesh ([@rajesh4275](https://github.com/rajesh4275)) – Project Founder & Lead System Architect
-* **Vision & Core Conception:** Conceived the foundational FitFlow AI mission to bridge intelligent routine planning with holistic physical wellness and yoga routines.
-* **Domain Research & Exercise Ontology:** Curated and structured the comprehensive repository datasets encompassing multi-tier yoga asanas, resistance movements, calorie expenditure metrics, and anatomical muscle focus taxonomies.
-* **Foundational Plan Generation Engine:** Engineered the original algorithmic framework responsible for matching user fitness levels, equipment availability, and target muscle groups into cohesive routines.
-* **Initial Web Application & Prototype UI:** Designed the baseline Flask MVC application structure, foundational route controllers, responsive front-end layouts, and interactive styling patterns.
-
-### 🚀 Zaheer Dhudekula ([@dhudekulazaheer-jpg](https://github.com/dhudekulazaheer-jpg)) – Co-Developer & Modernization Lead (Advancing FitFlow to the Next Level)
-* **Enterprise Persistence & Security:** Migrated in-memory session structures to an enterprise MySQL 8.0 relational architecture with SQLAlchemy ORM, secure Werkzeug authentication, CSRF defense, and strict multi-user privacy isolation.
-* **Clinical Health & Contraindication Safety Engine (`ml/health_safety.py`):** Developed the rule-based medical screening engine detecting contraindicated movements across surgical histories, recovery stages, and chronic joint vulnerabilities.
-* **7-Day Split & Progressive Overload Systems:** Engineered the multi-day structured weekly program generator (`ml/program_generator.py`), smart dynamic warm-up/cool-down protocols, and data-driven progressive overload recommendations (`ml/progression_advisor.py`).
-* **Real-Time Interactive Workout Experience:** Built the interactive session player featuring synchronized Web Audio API chimes, direct YouTube reference integrations, and real-time exercise swappers.
-* **Social Accountability Network:** Created the "Circle of Consistency" friends ecosystem featuring unique `#FIT-XXXX` shareable codes, real-time streak leaderboards, and High-Five encouragement kudos.
-* **Editorial UI Overhaul & CSS Art System:** Crafted bespoke HTML/CSS vector icons eliminating system emojis, engineered sticky frosted-glass navigation with scroll elevation, and implemented a 30-test automated verification suite with 100% test pass rate.
+* **Zaheer Dhudekula** ([@dhudekulazaheer-jpg](https://github.com/dhudekulazaheer-jpg)) – **Full-Stack Feature Engineer & Modernization**  
+  Advanced the project with MySQL database persistence, clinical safety screening, 7-day split generator, social streak leaderboards, and modern UI design.
 
 ---
 
