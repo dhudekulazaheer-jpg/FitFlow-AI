@@ -55,7 +55,11 @@
                     <span class="streak-pill-text"><strong id="navStreakCount">0</strong> d streak</span>
                 </button>
                 <button type="button" class="nav-leaderboard-pill" id="navLeaderboardBtn" aria-label="Friends &amp; Streak Leaderboard" title="View Friends &amp; Streak Leaderboard">
-                    <span class="nav-leaderboard-icon">🏆</span>
+                    <span class="nav-leaderboard-icon css-trophy-mini" aria-hidden="true">
+                        <span class="trophy-cup"></span>
+                        <span class="trophy-stem"></span>
+                        <span class="trophy-base"></span>
+                    </span>
                     <span class="leaderboard-pill-text">Friends</span>
                 </button>
                 <span class="user-greeting">Hi, <strong>{{ current_user.name.split()[0] if current_user.name else 'Member' }}</strong></span>
@@ -216,7 +220,10 @@
                 </div>
 
                 <div class="floating-card floating-top">
-                    <span class="floating-icon">🌿</span>
+                    <span class="floating-icon css-float-leaf" aria-hidden="true">
+                        <span class="float-leaf-blade"></span>
+                        <span class="float-leaf-rib"></span>
+                    </span>
                     <div>
                         <strong>Find your balance</strong>
                         <small>Mind · Body · Wellness</small>
@@ -752,28 +759,41 @@
                 <div class="analytics-dashboard" id="analyticsDashboard">
                     <div class="analytics-metrics-grid">
                         <div class="analytics-card">
-                            <span class="analytics-icon">🔥</span>
+                            <div class="analytics-icon css-stat-flame" aria-hidden="true">
+                                <span class="stat-flame-outer"></span>
+                                <span class="stat-flame-inner"></span>
+                            </div>
                             <div class="analytics-info">
                                 <span class="analytics-num" id="statStreak">0</span>
                                 <span class="analytics-label">Active Streak</span>
                             </div>
                         </div>
                         <div class="analytics-card">
-                            <span class="analytics-icon">⚡</span>
+                            <div class="analytics-icon css-stat-bolt" aria-hidden="true">
+                                <span class="stat-bolt-top"></span>
+                                <span class="stat-bolt-bottom"></span>
+                            </div>
                             <div class="analytics-info">
                                 <span class="analytics-num" id="statCalories">0</span>
                                 <span class="analytics-label">Est. Calories</span>
                             </div>
                         </div>
                         <div class="analytics-card">
-                            <span class="analytics-icon">🏆</span>
+                            <div class="analytics-icon css-stat-trophy" aria-hidden="true">
+                                <span class="stat-cup"></span>
+                                <span class="stat-stem"></span>
+                                <span class="stat-base"></span>
+                            </div>
                             <div class="analytics-info">
                                 <span class="analytics-num" id="statCompleted">0</span>
                                 <span class="analytics-label">Completed</span>
                             </div>
                         </div>
                         <div class="analytics-card">
-                            <span class="analytics-icon">📋</span>
+                            <div class="analytics-icon css-stat-scroll" aria-hidden="true">
+                                <span class="stat-doc-page"></span>
+                                <span class="stat-doc-lines"></span>
+                            </div>
                             <div class="analytics-info">
                                 <span class="analytics-num" id="statPlans">0</span>
                                 <span class="analytics-label">Plans Saved</span>
@@ -1083,20 +1103,36 @@
 
             <div class="about-features">
 
-                <div>
-                    <span>🌱</span>
+                <div class="about-feature-card">
+                    <div class="about-css-icon icon-sprout" aria-hidden="true">
+                        <span class="sprout-glow"></span>
+                        <span class="sprout-soil"></span>
+                        <span class="sprout-stem"></span>
+                        <span class="sprout-leaf leaf-left"></span>
+                        <span class="sprout-leaf leaf-right"></span>
+                    </div>
                     <strong>Personalized</strong>
                     <small>Plans based on your goals</small>
                 </div>
 
-                <div>
-                    <span>🧘</span>
+                <div class="about-feature-card">
+                    <div class="about-css-icon icon-balance" aria-hidden="true">
+                        <span class="balance-aura"></span>
+                        <span class="balance-pedestal"></span>
+                        <span class="balance-petal petal-left"></span>
+                        <span class="balance-petal petal-center"></span>
+                        <span class="balance-petal petal-right"></span>
+                        <span class="balance-core"></span>
+                    </div>
                     <strong>Balanced</strong>
                     <small>Yoga and fitness together</small>
                 </div>
 
-                <div>
-                    <span>✦</span>
+                <div class="about-feature-card">
+                    <div class="about-css-icon icon-intelligent" aria-hidden="true">
+                        <span class="intel-ring"></span>
+                        <span class="intel-sparkle">✦</span>
+                    </div>
                     <strong>Intelligent</strong>
                     <small>AI-assisted recommendations</small>
                 </div>
@@ -1242,7 +1278,12 @@
         <div class="streak-modal-card leaderboard-modal-card">
             <div class="streak-modal-header">
                 <div class="streak-header-hero">
-                    <span class="leaderboard-trophy-crest">🏆</span>
+                    <div class="leaderboard-trophy-crest css-trophy-crest" aria-hidden="true">
+                        <span class="crest-cup"></span>
+                        <span class="crest-stem"></span>
+                        <span class="crest-base"></span>
+                        <span class="crest-star">✦</span>
+                    </div>
                     <div>
                         <span class="streak-kicker">✦ SOCIAL ACCOUNTABILITY</span>
                         <h3 class="streak-hero-title">Circle of Consistency</h3>

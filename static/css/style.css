@@ -1005,15 +1005,159 @@ input {
     flex-wrap: wrap;
 }
 
-.about-features div {
+.about-features .about-feature-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
+    transition: transform 0.25s ease;
 }
 
-.about-features span {
-    font-size: 28px;
+.about-features .about-feature-card:hover {
+    transform: translateY(-2px);
+}
+
+.about-css-icon {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(220, 233, 218, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* 1. Sprout (Personalized) */
+.about-css-icon.icon-sprout .sprout-glow {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(169, 196, 167, 0.25) 0%, transparent 70%);
+}
+
+.about-css-icon.icon-sprout .sprout-soil {
+    position: absolute;
+    bottom: 8px;
+    width: 18px;
+    height: 4px;
+    background: #88A690;
+    border-radius: 50%;
+    opacity: 0.65;
+}
+
+.about-css-icon.icon-sprout .sprout-stem {
+    position: absolute;
+    bottom: 10px;
+    width: 3px;
+    height: 14px;
+    background: linear-gradient(180deg, #A9C4A7 0%, #5D916B 100%);
+    border-radius: 2px;
+}
+
+.about-css-icon.icon-sprout .sprout-leaf.leaf-left {
+    position: absolute;
+    bottom: 18px;
+    left: 10px;
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #CEE5CC 0%, #6E9E7A 100%);
+    border-radius: 12px 0 12px 0;
+    transform: rotate(-16deg);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.about-css-icon.icon-sprout .sprout-leaf.leaf-right {
+    position: absolute;
+    bottom: 20px;
+    right: 10px;
+    width: 13px;
+    height: 13px;
+    background: linear-gradient(135deg, #B8DBB6 0%, #568B63 100%);
+    border-radius: 0 13px 0 13px;
+    transform: rotate(20deg);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* 2. Zen Lotus (Balanced) */
+.about-css-icon.icon-balance .balance-aura {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.24) 0%, transparent 70%);
+    animation: pulseSoft 3s ease-in-out infinite alternate;
+}
+
+.about-css-icon.icon-balance .balance-pedestal {
+    position: absolute;
+    bottom: 8px;
+    width: 22px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent 0%, #F59E0B 25%, #FBBF24 50%, #F59E0B 75%, transparent 100%);
+    border-radius: 2px;
+}
+
+.about-css-icon.icon-balance .balance-petal {
+    position: absolute;
+    bottom: 11px;
+    border-radius: 50% 50% 20% 20%;
+    background: linear-gradient(180deg, #FDE68A 0%, #D97706 100%);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.about-css-icon.icon-balance .balance-petal.petal-center {
+    width: 9px;
+    height: 19px;
+    z-index: 2;
+}
+
+.about-css-icon.icon-balance .balance-petal.petal-left {
+    width: 8px;
+    height: 15px;
+    left: 11px;
+    transform: rotate(-26deg);
+    opacity: 0.92;
+}
+
+.about-css-icon.icon-balance .balance-petal.petal-right {
+    width: 8px;
+    height: 15px;
+    right: 11px;
+    transform: rotate(26deg);
+    opacity: 0.92;
+}
+
+.about-css-icon.icon-balance .balance-core {
+    position: absolute;
+    bottom: 13px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #FFFBEB;
+    box-shadow: 0 0 6px rgba(255, 251, 235, 0.9);
+    z-index: 3;
+}
+
+/* 3. Intelligent Sparkle (Intelligent) */
+.about-css-icon.icon-intelligent .intel-ring {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px dashed rgba(220, 233, 218, 0.35);
+    animation: rotateSlow 20s linear infinite;
+}
+
+.about-css-icon.icon-intelligent .intel-sparkle {
+    font-size: 26px;
+    color: #FFFFFF;
+    text-shadow: 0 0 10px rgba(220, 233, 218, 0.8), 0 0 20px rgba(251, 191, 36, 0.4);
+    line-height: 1;
+    animation: pulseSoft 2.5s ease-in-out infinite alternate;
 }
 
 .about-features strong {
@@ -3748,4 +3892,247 @@ body.auth-page {
     background: #FFF9F2;
     border-color: #F6BA8B;
     transform: scale(1.04);
+}
+
+
+/* =========================================
+   PURE CSS VECTOR ART SYSTEM (DASHBOARD & CRESTS)
+========================================= */
+
+/* Hero Float Card Leaf */
+.css-float-leaf {
+    width: 22px;
+    height: 22px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.float-leaf-blade {
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(135deg, #A9C4A7 0%, #183D32 100%);
+    border-radius: 14px 0 14px 0;
+    transform: rotate(20deg);
+    box-shadow: 0 1px 3px rgba(24, 61, 50, 0.2);
+}
+
+.float-leaf-rib {
+    position: absolute;
+    width: 12px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.45);
+    transform: rotate(20deg);
+}
+
+/* Nav Trophy Mini */
+.css-trophy-mini {
+    width: 16px;
+    height: 16px;
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.css-trophy-mini .trophy-cup {
+    width: 12px;
+    height: 8px;
+    background: linear-gradient(180deg, #FBBF24 0%, #D97706 100%);
+    border-radius: 1px 1px 6px 6px;
+    box-shadow: 0 1px 2px rgba(217, 119, 6, 0.3);
+}
+
+.css-trophy-mini .trophy-stem {
+    width: 2px;
+    height: 3px;
+    background: #D97706;
+}
+
+.css-trophy-mini .trophy-base {
+    width: 8px;
+    height: 2px;
+    background: #B45309;
+    border-radius: 1px;
+}
+
+/* Leaderboard Crest in Modal */
+.css-trophy-crest {
+    width: 46px;
+    height: 46px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, #FEF3C7 0%, #FFFBEB 70%);
+    border: 1px solid #FCD34D;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+.css-trophy-crest .crest-cup {
+    width: 22px;
+    height: 15px;
+    background: linear-gradient(180deg, #FBBF24 0%, #D97706 100%);
+    border-radius: 2px 2px 11px 11px;
+    box-shadow: 0 2px 4px rgba(217, 119, 6, 0.25);
+    position: relative;
+}
+
+.css-trophy-crest .crest-cup::before,
+.css-trophy-crest .crest-cup::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: 2px solid #D97706;
+    border-radius: 5px;
+}
+
+.css-trophy-crest .crest-cup::before {
+    left: -5px;
+}
+
+.css-trophy-crest .crest-cup::after {
+    right: -5px;
+}
+
+.css-trophy-crest .crest-stem {
+    width: 4px;
+    height: 5px;
+    background: #B45309;
+}
+
+.css-trophy-crest .crest-base {
+    width: 16px;
+    height: 4px;
+    background: #92400E;
+    border-radius: 2px;
+}
+
+.css-trophy-crest .crest-star {
+    position: absolute;
+    top: 5px;
+    font-size: 10px;
+    color: #FFFFFF;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.9);
+}
+
+/* Analytics Dashboard Metric Icons */
+.css-stat-flame {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-flame-outer {
+    width: 14px;
+    height: 19px;
+    background: linear-gradient(180deg, #F97316 0%, #DC2626 100%);
+    border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
+    box-shadow: 0 0 6px rgba(249, 115, 22, 0.4);
+}
+
+.stat-flame-inner {
+    position: absolute;
+    bottom: 3px;
+    width: 7px;
+    height: 10px;
+    background: linear-gradient(180deg, #FDE047 0%, #EA580C 100%);
+    border-radius: 50% 50% 20% 20%;
+}
+
+.css-stat-bolt {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-bolt-top {
+    position: absolute;
+    top: 4px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 9px solid #F59E0B;
+    transform: rotate(20deg);
+}
+
+.stat-bolt-bottom {
+    position: absolute;
+    bottom: 4px;
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 9px solid #D97706;
+    transform: rotate(20deg);
+}
+
+.css-stat-trophy {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.css-stat-trophy .stat-cup {
+    width: 14px;
+    height: 10px;
+    background: linear-gradient(180deg, #FBBF24 0%, #D97706 100%);
+    border-radius: 1px 1px 7px 7px;
+    box-shadow: 0 1px 3px rgba(217, 119, 6, 0.3);
+}
+
+.css-stat-trophy .stat-stem {
+    width: 3px;
+    height: 3px;
+    background: #D97706;
+}
+
+.css-stat-trophy .stat-base {
+    width: 10px;
+    height: 3px;
+    background: #92400E;
+    border-radius: 1px;
+}
+
+.css-stat-scroll {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-doc-page {
+    width: 14px;
+    height: 18px;
+    background: #FAF8F5;
+    border: 1.5px solid #285747;
+    border-radius: 2px 5px 2px 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.stat-doc-lines {
+    position: absolute;
+    width: 7px;
+    height: 1px;
+    background: #285747;
+    box-shadow: 0 3px 0 #285747, 0 6px 0 #285747;
 }

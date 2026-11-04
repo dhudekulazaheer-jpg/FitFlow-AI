@@ -788,7 +788,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const restCard = document.createElement("div");
                 restCard.className = "rest-day-card";
                 restCard.innerHTML = `
-                    <div class="rest-day-icon">🌿</div>
+                    <div class="rest-day-icon css-float-leaf"><span class="float-leaf-blade"></span></div>
                     <h4>Rest &amp; Deep Tissue Recovery</h4>
                     <p>${escapeHtml(dayObj.routine_summary)}</p>
                     <span class="rest-day-cue">✦ Guidance: ${escapeHtml(dayObj.recovery_guidance)}</span>
@@ -1262,7 +1262,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const sessionExerciseInstructions = document.getElementById("sessionExerciseInstructions");
         const sessionControls = document.querySelector(".session-controls");
 
-        if (sessionExerciseName) sessionExerciseName.textContent = "🎉 Session Completed!";
+        if (sessionExerciseName) sessionExerciseName.textContent = "✦ Session Completed!";
         if (sessionExerciseSub) sessionExerciseSub.textContent = "Outstanding effort! Your body and mind thank you.";
         if (sessionTimer) sessionTimer.textContent = "DONE";
         if (sessionExerciseInstructions) {
@@ -1641,7 +1641,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 row.className = `leaderboard-row ${member.is_current_user ? "is-me" : ""}`;
 
                 const rankClass = member.rank === 1 ? "rank-1" : member.rank === 2 ? "rank-2" : member.rank === 3 ? "rank-3" : "";
-                const rankIcon = member.rank === 1 ? "🥇" : member.rank === 2 ? "🥈" : member.rank === 3 ? "🥉" : `#${member.rank}`;
+                const rankIcon = `#${member.rank}`;
 
                 const userCol = document.createElement("div");
                 userCol.className = "row-user-col";
@@ -1656,7 +1656,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const streakCol = document.createElement("div");
                 streakCol.className = "row-streak-col";
                 streakCol.innerHTML = `
-                    <span class="row-streak-badge">🔥 ${member.current_streak}d streak</span>
+                    <span class="row-streak-badge"><span class="badge-flame-pip">✦</span> ${member.current_streak}d streak</span>
                     <span class="row-sessions-sub">${member.completed_sessions} completed • ${member.total_calories || 0} kcal</span>
                 `;
 
