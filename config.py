@@ -1,7 +1,14 @@
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
+
+# Load .env file
+load_dotenv(BASE_DIR / ".env")
+
+SECRET_KEY = os.getenv("SECRET_KEY", "fitflow-ai-development-secret-key-change-in-production")
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:password@localhost/fitflow_ai")
 
 DATASET_DIR = BASE_DIR / "datasets"
 YOGA_DIR = DATASET_DIR / "yoga"

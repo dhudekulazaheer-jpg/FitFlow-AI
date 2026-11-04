@@ -1,6 +1,11 @@
-
 Flask
 pandas
 numpy
 scikit-learn
 joblib
+Flask-SQLAlchemy
+Flask-Login
+Flask-WTF
+PyMySQL
+gunicorn
+python-dotenv
