@@ -3478,3 +3478,263 @@ body.auth-page {
     0% { transform: scale(0.96); opacity: 0.85; }
     100% { transform: scale(1.05); opacity: 1; }
 }
+
+
+/* =========================================
+   NAVBAR LEADERBOARD PILL & FRIENDS MODAL
+========================================= */
+
+.nav-leaderboard-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #FAF8F5;
+    border: 1px solid #ECE7DF;
+    border-radius: 20px;
+    padding: 6px 13px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: var(--forest);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1;
+}
+
+.nav-leaderboard-pill:hover {
+    background: #F4F8F4;
+    border-color: #B4D4BC;
+    box-shadow: 0 4px 12px rgba(24, 61, 50, 0.08);
+    transform: translateY(-1px);
+}
+
+.nav-leaderboard-icon {
+    font-size: 14px;
+}
+
+.leaderboard-modal-card {
+    max-width: 520px;
+}
+
+.leaderboard-trophy-crest {
+    font-size: 30px;
+    line-height: 1;
+}
+
+/* Friend Invite Strip */
+.friend-invite-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #FAF8F5;
+    border: 1px solid #ECE7DF;
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.invite-code-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.invite-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.invite-code {
+    font-family: 'DM Sans', monospace, sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--forest);
+    letter-spacing: 0.5px;
+}
+
+.add-friend-form {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.add-friend-form input {
+    flex: 1;
+    background: #FFFFFF;
+    border: 1px solid #D8D2C5;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.add-friend-form input:focus {
+    border-color: var(--forest);
+}
+
+.add-friend-form button {
+    background: var(--forest);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+}
+
+.add-friend-form button:hover {
+    background: var(--forest-light);
+}
+
+.friend-action-msg {
+    font-size: 11.5px;
+    min-height: 16px;
+    margin-bottom: 12px;
+    color: var(--forest);
+    font-weight: 600;
+    padding: 0 4px;
+}
+
+.kudos-banner {
+    background: #F4F8F4;
+    border: 1px solid #C4DFC8;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #1B5E20;
+    margin-bottom: 14px;
+}
+
+/* Leaderboard List */
+.leaderboard-section {
+    background: #FFFFFF;
+    border: 1px solid #ECE7DF;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+}
+
+.leaderboard-list-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: #8C9E92;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #F0ECE4;
+    margin-bottom: 8px;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr;
+    align-items: center;
+    padding: 10px 4px;
+    border-bottom: 1px solid #F6F3ED;
+    transition: background 0.15s ease;
+}
+
+.leaderboard-row:last-child {
+    border-bottom: none;
+}
+
+.leaderboard-row.is-me {
+    background: #FAFBF9;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.row-member-col {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.row-rank-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    background: #FAF8F5;
+    color: var(--muted);
+    border: 1px solid #ECE7DF;
+}
+
+.row-rank-badge.rank-1 {
+    background: #FEF3C7;
+    color: #92400E;
+    border-color: #FCD34D;
+}
+
+.row-rank-badge.rank-2 {
+    background: #F3F4F6;
+    color: #374151;
+    border-color: #E5E7EB;
+}
+
+.row-rank-badge.rank-3 {
+    background: #FFEDD5;
+    color: #9A3412;
+    border-color: #FDBA74;
+}
+
+.row-name {
+    font-size: 13px;
+    color: var(--forest);
+}
+
+.row-streak-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.row-streak-badge {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #D35400;
+}
+
+.row-sessions-sub {
+    font-size: 10.5px;
+    color: var(--muted);
+}
+
+.kudos-btn {
+    background: #FAF8F5;
+    border: 1px solid #ECE7DF;
+    border-radius: 14px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--forest);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.kudos-btn:hover {
+    background: #FFF9F2;
+    border-color: #F6BA8B;
+    transform: scale(1.04);
+}

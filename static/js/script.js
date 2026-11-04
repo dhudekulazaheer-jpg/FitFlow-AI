@@ -1572,6 +1572,195 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================
+       FRIENDS & STREAK LEADERBOARD
+    ===================================== */
+
+    const leaderboardModal = document.getElementById("leaderboardModal");
+    const closeLeaderboardBtn = document.getElementById("closeLeaderboardBtn");
+    const navLeaderboardBtn = document.getElementById("navLeaderboardBtn");
+    const myFriendCodeDisplay = document.getElementById("myFriendCodeDisplay");
+    const friendIdentifierInput = document.getElementById("friendIdentifierInput");
+    const addFriendBtn = document.getElementById("addFriendBtn");
+    const friendActionMsg = document.getElementById("friendActionMsg");
+    const kudosBanner = document.getElementById("kudosBanner");
+    const leaderboardList = document.getElementById("leaderboardList");
+
+    async function openLeaderboardModal() {
+        if (!leaderboardModal) return;
+        leaderboardModal.hidden = false;
+        document.body.classList.add("sidebar-open");
+        if (friendActionMsg) friendActionMsg.textContent = "";
+
+        await loadFriendsLeaderboard();
+    }
+
+    function closeLeaderboardModal() {
+        if (!leaderboardModal) return;
+        leaderboardModal.hidden = true;
+        document.body.classList.remove("sidebar-open");
+    }
+
+    async function loadFriendsLeaderboard() {
+        if (!leaderboardList) return;
+        leaderboardList.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--muted); font-size: 13px;">Loading leaderboard...</div>';
+
+        try {
+            const data = await apiRequest("/api/friends/leaderboard");
+            if (!data.success) throw new Error(data.error || "Failed to load");
+
+            if (myFriendCodeDisplay && data.my_friend_code) {
+                myFriendCodeDisplay.textContent = `#${data.my_friend_code}`;
+            }
+
+            if (kudosBanner) {
+                if (data.kudos && data.kudos.length > 0) {
+                    const latest = data.kudos[0];
+                    kudosBanner.hidden = false;
+                    kudosBanner.innerHTML = `
+                        <span class="kudos-banner-icon">✋</span>
+                        <div class="kudos-banner-text">
+                            <strong>${escapeHtml(latest.sender_name)}</strong> sent you a High Five for keeping your streak alive!
+                        </div>
+                    `;
+                } else {
+                    kudosBanner.hidden = true;
+                    kudosBanner.innerHTML = "";
+                }
+            }
+
+            const items = data.leaderboard || [];
+            if (items.length === 0) {
+                leaderboardList.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--muted); font-size: 13px;">No streak records yet. Complete your first session to claim the top spot!</div>';
+                return;
+            }
+
+            leaderboardList.replaceChildren();
+
+            items.forEach((member) => {
+                const row = document.createElement("div");
+                row.className = `leaderboard-row ${member.is_current_user ? "is-me" : ""}`;
+
+                const rankClass = member.rank === 1 ? "rank-1" : member.rank === 2 ? "rank-2" : member.rank === 3 ? "rank-3" : "";
+                const rankIcon = member.rank === 1 ? "🥇" : member.rank === 2 ? "🥈" : member.rank === 3 ? "🥉" : `#${member.rank}`;
+
+                const userCol = document.createElement("div");
+                userCol.className = "row-user-col";
+                userCol.innerHTML = `
+                    <span class="row-rank-badge ${rankClass}">${rankIcon}</span>
+                    <div>
+                        <div class="row-name"><strong>${escapeHtml(member.name)}</strong></div>
+                        <div class="row-code">${escapeHtml(member.friend_code || "")}</div>
+                    </div>
+                `;
+
+                const streakCol = document.createElement("div");
+                streakCol.className = "row-streak-col";
+                streakCol.innerHTML = `
+                    <span class="row-streak-badge">🔥 ${member.current_streak}d streak</span>
+                    <span class="row-sessions-sub">${member.completed_sessions} completed • ${member.total_calories || 0} kcal</span>
+                `;
+
+                const actionCol = document.createElement("div");
+                actionCol.className = "row-action-col";
+
+                if (member.is_current_user) {
+                    actionCol.innerHTML = `<span class="you-indicator">✦ You</span>`;
+                } else {
+                    const kudosBtn = document.createElement("button");
+                    kudosBtn.type = "button";
+                    kudosBtn.className = "kudos-btn";
+                    kudosBtn.innerHTML = "✋ High Five";
+                    kudosBtn.title = `Send ${escapeHtml(member.first_name)} a High Five!`;
+                    kudosBtn.addEventListener("click", async () => {
+                        kudosBtn.disabled = true;
+                        kudosBtn.textContent = "Sending...";
+                        try {
+                            await apiRequest("/api/friends/kudos", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ friend_id: member.user_id })
+                            });
+                            kudosBtn.textContent = "Sent! ✦";
+                            kudosBtn.style.background = "#FEF3C7";
+                            kudosBtn.style.borderColor = "#FCD34D";
+                        } catch (err) {
+                            kudosBtn.disabled = false;
+                            kudosBtn.textContent = "✋ Try Again";
+                            alert(err.message || "Could not send kudos.");
+                        }
+                    });
+                    actionCol.appendChild(kudosBtn);
+                }
+
+                row.appendChild(userCol);
+                row.appendChild(streakCol);
+                row.appendChild(actionCol);
+
+                leaderboardList.appendChild(row);
+            });
+
+        } catch (err) {
+            console.error("Leaderboard load error:", err);
+            leaderboardList.innerHTML = `<div style="padding: 24px; text-align: center; color: #DC2626; font-size: 13px;">${escapeHtml(err.message || "Failed to load leaderboard.")}</div>`;
+        }
+    }
+
+    async function handleAddFriend() {
+        if (!friendIdentifierInput || !addFriendBtn) return;
+        const val = friendIdentifierInput.value.trim();
+        if (!val) {
+            if (friendActionMsg) {
+                friendActionMsg.style.color = "#DC2626";
+                friendActionMsg.textContent = "Please enter a Friend Code (e.g. FIT-0001) or an email address.";
+            }
+            return;
+        }
+
+        addFriendBtn.disabled = true;
+        addFriendBtn.textContent = "Adding...";
+        if (friendActionMsg) friendActionMsg.textContent = "";
+
+        try {
+            const res = await apiRequest("/api/friends/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ identifier: val })
+            });
+
+            if (friendActionMsg) {
+                friendActionMsg.style.color = "#166534";
+                friendActionMsg.textContent = res.message || "Friend connected successfully!";
+            }
+            friendIdentifierInput.value = "";
+            await loadFriendsLeaderboard();
+        } catch (err) {
+            if (friendActionMsg) {
+                friendActionMsg.style.color = "#DC2626";
+                friendActionMsg.textContent = err.message || "Unable to connect friend.";
+            }
+        } finally {
+            addFriendBtn.disabled = false;
+            addFriendBtn.textContent = "Connect +";
+        }
+    }
+
+    navLeaderboardBtn?.addEventListener("click", openLeaderboardModal);
+    closeLeaderboardBtn?.addEventListener("click", closeLeaderboardModal);
+    leaderboardModal?.addEventListener("click", (e) => {
+        if (e.target.id === "leaderboardModal") {
+            closeLeaderboardModal();
+        }
+    });
+    addFriendBtn?.addEventListener("click", handleAddFriend);
+    friendIdentifierInput?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleAddFriend();
+        }
+    });
+
+
+    /* =====================================
        YOUTUBE REFERENCE LINKS
     ===================================== */
 

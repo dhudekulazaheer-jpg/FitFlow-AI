@@ -48,11 +48,16 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @property
+    def friend_code(self):
+        return f"FIT-{self.id:04d}"
+
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
             "email": self.email,
+            "friend_code": self.friend_code,
             "created_at": self.created_at.isoformat() if self.created_at else None
         }
 
@@ -223,5 +228,68 @@ class PlanHistory(db.Model):
                 if (plan_ref and plan_ref.generated_at)
                 else (self.created_at.isoformat() if self.created_at else None)
             ),
+            "created_at": self.created_at.isoformat() if self.created_at else None
+        }
+
+
+class UserFriendship(db.Model):
+    __tablename__ = "user_friendships"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    friend_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    status = db.Column(db.String(20), default="accepted")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "friend_id", name="uq_user_friend"),
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "friend_id": self.friend_id,
+            "status": self.status,
+            "created_at": self.created_at.isoformat() if self.created_at else None
+        }
+
+
+class FriendKudos(db.Model):
+    __tablename__ = "friend_kudos"
+
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+    recipient_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+    message = db.Column(db.String(120), default="sent you a High Five! ✦")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    sender = db.relationship("User", foreign_keys=[sender_id])
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "sender_id": self.sender_id,
+            "sender_name": self.sender.name if self.sender else "Friend",
+            "message": self.message,
             "created_at": self.created_at.isoformat() if self.created_at else None
         }

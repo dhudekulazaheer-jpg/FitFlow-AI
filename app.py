@@ -29,7 +29,9 @@ from models import (
     UserProfile,
     HealthAssessment,
     GeneratedPlan,
-    PlanHistory
+    PlanHistory,
+    UserFriendship,
+    FriendKudos
 )
 from ml.plan_generator import PlanGenerator
 from ml.exercise_swapper import exercise_swapper
@@ -914,6 +916,160 @@ def advance_user_level():
     except Exception as e:
         db.session.rollback()
         return jsonify({"success": False, "error": "Could not update fitness level."}), 500
+
+
+# =========================================
+# FRIENDS & STREAK LEADERBOARD
+# =========================================
+
+@app.route("/api/friends/leaderboard", methods=["GET"])
+@login_required
+def get_friends_leaderboard():
+    try:
+        # 1. Fetch all friendships where current_user is user_id or friend_id
+        friendships = UserFriendship.query.filter(
+            ((UserFriendship.user_id == current_user.id) | (UserFriendship.friend_id == current_user.id)),
+            UserFriendship.status == "accepted"
+        ).all()
+
+        friend_user_ids = set()
+        for f in friendships:
+            if f.user_id != current_user.id:
+                friend_user_ids.add(f.user_id)
+            if f.friend_id != current_user.id:
+                friend_user_ids.add(f.friend_id)
+
+        all_participant_ids = [current_user.id] + list(friend_user_ids)
+
+        leaderboard_items = []
+        for uid in all_participant_ids:
+            u = User.query.get(uid)
+            if not u:
+                continue
+            analytics = get_user_analytics(uid)
+            is_me = (uid == current_user.id)
+            leaderboard_items.append({
+                "user_id": u.id,
+                "name": u.name + (" (You)" if is_me else ""),
+                "first_name": u.name.split()[0] if u.name else "Member",
+                "friend_code": u.friend_code,
+                "current_streak": analytics.get("current_streak", 0),
+                "best_streak": analytics.get("best_streak", 0),
+                "completed_sessions": analytics.get("completed_sessions", 0),
+                "total_calories": analytics.get("total_calories_burned", 0),
+                "is_current_user": is_me
+            })
+
+        # Sort descending by streak, then completed sessions, then calories
+        leaderboard_items.sort(key=lambda x: (x["current_streak"], x["completed_sessions"], x["total_calories"]), reverse=True)
+
+        for index, item in enumerate(leaderboard_items):
+            item["rank"] = index + 1
+
+        kudos_entries = FriendKudos.query.filter_by(recipient_id=current_user.id)\
+            .order_by(FriendKudos.created_at.desc()).limit(5).all()
+
+        return jsonify({
+            "success": True,
+            "my_friend_code": current_user.friend_code,
+            "leaderboard": leaderboard_items,
+            "total_friends": len(friend_user_ids),
+            "kudos": [k.to_dict() for k in kudos_entries]
+        })
+    except Exception as e:
+        app.logger.exception("Failed to get leaderboard")
+        return jsonify({"success": False, "error": "Could not retrieve leaderboard."}), 500
+
+
+@app.route("/api/friends/add", methods=["POST"])
+@login_required
+def add_friend():
+    data = request.get_json(silent=True) or {}
+    query = str(data.get("identifier", "")).strip()
+
+    if not query:
+        return jsonify({"success": False, "error": "Please enter an email or #FIT Friend Code."}), 400
+
+    target_user = None
+    if query.lower().startswith("fit-"):
+        try:
+            target_id = int(query.split("-")[1])
+            target_user = User.query.get(target_id)
+        except Exception:
+            pass
+
+    if not target_user:
+        target_user = User.query.filter_by(email=query.lower()).first()
+
+    if not target_user:
+        return jsonify({"success": False, "error": "No member found with that invite code or email."}), 404
+
+    if target_user.id == current_user.id:
+        return jsonify({"success": False, "error": "You cannot add yourself as a friend."}), 400
+
+    existing = UserFriendship.query.filter(
+        ((UserFriendship.user_id == current_user.id) & (UserFriendship.friend_id == target_user.id)) |
+        ((UserFriendship.user_id == target_user.id) & (UserFriendship.friend_id == current_user.id))
+    ).first()
+
+    if existing:
+        return jsonify({"success": False, "error": f"You and {target_user.name} are already connected!"}), 400
+
+    try:
+        friendship = UserFriendship(
+            user_id=current_user.id,
+            friend_id=target_user.id,
+            status="accepted"
+        )
+        db.session.add(friendship)
+
+        history = PlanHistory(
+            user_id=current_user.id,
+            activity=f"Connected with friend: {target_user.name}"
+        )
+        db.session.add(history)
+        db.session.commit()
+
+        return jsonify({
+            "success": True,
+            "message": f"Successfully connected with {target_user.name}! ✦",
+            "friend": target_user.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        app.logger.exception("Failed to add friend")
+        return jsonify({"success": False, "error": "Could not connect with friend."}), 500
+
+
+@app.route("/api/friends/kudos", methods=["POST"])
+@login_required
+def send_friend_kudos():
+    data = request.get_json(silent=True) or {}
+    friend_id = data.get("friend_id")
+
+    if not friend_id:
+        return jsonify({"success": False, "error": "Recipient ID required."}), 400
+
+    try:
+        friend = User.query.get(int(friend_id))
+        if not friend:
+            return jsonify({"success": False, "error": "Friend not found."}), 404
+
+        kudos = FriendKudos(
+            sender_id=current_user.id,
+            recipient_id=friend.id,
+            message="sent you a High Five for keeping your consistency! ✋✦"
+        )
+        db.session.add(kudos)
+        db.session.commit()
+
+        return jsonify({
+            "success": True,
+            "message": f"High Five sent to {friend.name.split()[0]}! ✋✦"
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": "Could not send High Five."}), 500
 
 
 # =========================================

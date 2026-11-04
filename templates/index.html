@@ -54,6 +54,10 @@
                     </div>
                     <span class="streak-pill-text"><strong id="navStreakCount">0</strong> d streak</span>
                 </button>
+                <button type="button" class="nav-leaderboard-pill" id="navLeaderboardBtn" aria-label="Friends &amp; Streak Leaderboard" title="View Friends &amp; Streak Leaderboard">
+                    <span class="nav-leaderboard-icon">🏆</span>
+                    <span class="leaderboard-pill-text">Friends</span>
+                </button>
                 <span class="user-greeting">Hi, <strong>{{ current_user.name.split()[0] if current_user.name else 'Member' }}</strong></span>
                 <a href="{{ url_for('logout') }}" class="nav-button nav-logout">Logout ⎋</a>
             {% else %}
@@ -1227,6 +1231,60 @@
                 <div class="streak-consistency-tip">
                     <span class="tip-star">✦</span>
                     <span><strong>Consistency Rule:</strong> Completing at least 3 sessions per week builds sustainable cardiovascular health, mobility, and muscle memory.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- FRIENDS & STREAK LEADERBOARD MODAL -->
+    <div class="streak-modal-overlay" id="leaderboardModal" hidden>
+        <div class="streak-modal-card leaderboard-modal-card">
+            <div class="streak-modal-header">
+                <div class="streak-header-hero">
+                    <span class="leaderboard-trophy-crest">🏆</span>
+                    <div>
+                        <span class="streak-kicker">✦ SOCIAL ACCOUNTABILITY</span>
+                        <h3 class="streak-hero-title">Circle of Consistency</h3>
+                        <p class="streak-hero-sub">Friendly accountability &amp; streak rankings with your fitness circle.</p>
+                    </div>
+                </div>
+                <button type="button" class="streak-close-btn" id="closeLeaderboardBtn" aria-label="Close leaderboard">&times;</button>
+            </div>
+
+            <!-- Friend Code & Invite Bar -->
+            <div class="friend-invite-strip">
+                <div class="invite-code-box">
+                    <span class="invite-label">Your Friend Code</span>
+                    <strong class="invite-code" id="myFriendCodeDisplay">#FIT-0000</strong>
+                </div>
+                <div class="add-friend-form">
+                    <input type="text" id="friendIdentifierInput" placeholder="Friend's email or #FIT code..." autocomplete="off">
+                    <button type="button" id="addFriendBtn">Connect +</button>
+                </div>
+            </div>
+            <div class="friend-action-msg" id="friendActionMsg"></div>
+
+            <!-- Kudos Notice Banner (if any) -->
+            <div class="kudos-banner" id="kudosBanner" hidden></div>
+
+            <!-- Leaderboard Rankings -->
+            <div class="leaderboard-section">
+                <div class="leaderboard-list-header">
+                    <span>Rank &amp; Member</span>
+                    <span>Streak &amp; Sessions</span>
+                    <span>Support</span>
+                </div>
+                <div class="leaderboard-list" id="leaderboardList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Privacy Guarantee Footer -->
+            <div class="streak-modal-footer">
+                <div class="streak-consistency-tip">
+                    <span class="tip-star">✦</span>
+                    <span><strong>100% Privacy Protected:</strong> Only your public name, streak, and workout counts are visible. Your health assessments and personal records remain strictly private.</span>
                 </div>
             </div>
         </div>

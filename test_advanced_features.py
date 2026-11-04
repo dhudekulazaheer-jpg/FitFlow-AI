@@ -120,8 +120,78 @@ def run_tests():
         assert updated_prof.fitness_level == "intermediate"
     print("✓ 5. Endpoint /api/advance-level successfully updates profile in MySQL")
 
+    # 6. Test Friends Connection & Streak Leaderboard System
+    with app.app_context():
+        friend_email = "friend_companion@fitflow.ai"
+        friend_user = User.query.filter_by(email=friend_email).first()
+        if not friend_user:
+            friend_user = User(name="Companion Runner", email=friend_email)
+            friend_user.set_password("SecurePass123!")
+            db.session.add(friend_user)
+            db.session.commit()
+            friend_profile = UserProfile(user_id=friend_user.id, fitness_level="intermediate", fitness_goal="endurance")
+            db.session.add(friend_profile)
+            db.session.commit()
+
+        assert user.friend_code == f"FIT-{user.id:04d}", f"Invalid friend code format: {user.friend_code}"
+        assert friend_user.friend_code == f"FIT-{friend_user.id:04d}"
+        friend_code_str = friend_user.friend_code
+        friend_id = friend_user.id
+    print("✓ 6. User friend_code properties formatted correctly")
+
+    # Test POST /api/friends/add (self-add rejection)
+    self_add_res = client.post("/api/friends/add",
+        headers={"X-CSRFToken": csrf_token},
+        json={"identifier": user.friend_code}
+    )
+    assert self_add_res.status_code == 400, "Should reject self-friending"
+
+    # Test POST /api/friends/add (valid add via friend code)
+    add_res = client.post("/api/friends/add",
+        headers={"X-CSRFToken": csrf_token},
+        json={"identifier": friend_code_str}
+    )
+    assert add_res.status_code == 200, f"Friend add failed: {add_res.get_json()}"
+    add_data = add_res.get_json()
+    assert add_data["success"] is True
+
+    # Test duplicate add rejection
+    dup_res = client.post("/api/friends/add",
+        headers={"X-CSRFToken": csrf_token},
+        json={"identifier": friend_email}
+    )
+    assert dup_res.status_code == 400, "Should reject duplicate friend connection"
+    print("✓ 7. Endpoint /api/friends/add connects companions and prevents duplicates/self-adds")
+
+    # Test GET /api/friends/leaderboard
+    lead_res = client.get("/api/friends/leaderboard", headers={"X-CSRFToken": csrf_token})
+    assert lead_res.status_code == 200, f"Leaderboard fetch failed: {lead_res.get_json()}"
+    lead_data = lead_res.get_json()
+    assert lead_data["success"] is True
+    assert "leaderboard" in lead_data
+    assert len(lead_data["leaderboard"]) >= 2, "Leaderboard should include both friends"
+
+    # Privacy verification: verify NO private health assessments or injuries are exposed in leaderboard
+    for member in lead_data["leaderboard"]:
+        assert "injuries" not in member
+        assert "medical_clearance" not in member
+        assert "health_assessment" not in member
+        assert "rank" in member
+        assert "current_streak" in member
+    print("✓ 8. Endpoint /api/friends/leaderboard computes rankings with strict privacy protection")
+
+    # Test POST /api/friends/kudos
+    kudos_res = client.post("/api/friends/kudos",
+        headers={"X-CSRFToken": csrf_token},
+        json={"friend_id": friend_id}
+    )
+    assert kudos_res.status_code == 200, f"Kudos failed: {kudos_res.get_json()}"
+    kudos_data = kudos_res.get_json()
+    assert kudos_data["success"] is True
+    print("✓ 9. Endpoint /api/friends/kudos sends High Five encouragement")
+
     print("=" * 60)
-    print("ALL 5 ADVANCED SUITE TESTS PASSED!")
+    print("ALL ADVANCED SUITE & SOCIAL TESTS PASSED!")
     print("=" * 60)
 
 
