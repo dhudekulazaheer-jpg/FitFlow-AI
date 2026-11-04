@@ -955,11 +955,22 @@ document.addEventListener("DOMContentLoaded", () => {
        FEATURE 4: ANALYTICS & BADGES ENGINE
     ===================================== */
 
+    let cachedAnalyticsData = null;
+    let streakCalCurrentDate = new Date();
+
     async function loadAnalytics() {
         try {
             const res = await apiRequest("/api/analytics");
             if (res.success && res.analytics) {
                 const a = res.analytics;
+                cachedAnalyticsData = a;
+
+                // Update Navbar Streak Count
+                const navStreakCount = document.getElementById("navStreakCount");
+                if (navStreakCount) {
+                    navStreakCount.textContent = a.current_streak || 0;
+                }
+
                 const statStreak = document.getElementById("statStreak");
                 const statCalories = document.getElementById("statCalories");
                 const statCompleted = document.getElementById("statCompleted");
@@ -992,6 +1003,146 @@ document.addEventListener("DOMContentLoaded", () => {
             console.warn("Analytics error:", e);
         }
     }
+
+
+    /* =====================================
+       FEATURE: STREAK & CONSISTENCY CALENDAR
+    ===================================== */
+
+    function openStreakCalendar() {
+        const modal = document.getElementById("streakCalendarModal");
+        if (!modal) return;
+
+        const a = cachedAnalyticsData || { current_streak: 0, best_streak: 0, completed_sessions: 0, active_dates: [] };
+
+        const calStreakVal = document.getElementById("calStreakVal");
+        const calActiveStreak = document.getElementById("calActiveStreak");
+        const calBestStreak = document.getElementById("calBestStreak");
+        const calTotalSessions = document.getElementById("calTotalSessions");
+        const calStreakSubtitle = document.getElementById("calStreakSubtitle");
+
+        if (calStreakVal) calStreakVal.textContent = a.current_streak || 0;
+        if (calActiveStreak) calActiveStreak.textContent = a.current_streak || 0;
+        if (calBestStreak) calBestStreak.textContent = a.best_streak || a.current_streak || 0;
+        if (calTotalSessions) calTotalSessions.textContent = a.completed_sessions || 0;
+
+        if (calStreakSubtitle) {
+            const streak = a.current_streak || 0;
+            if (streak === 0) {
+                calStreakSubtitle.textContent = "Start your streak today by completing your first workout or yoga routine!";
+            } else if (streak === 1) {
+                calStreakSubtitle.textContent = "Great start! Complete tomorrow's routine to build continuous momentum.";
+            } else if (streak < 3) {
+                calStreakSubtitle.textContent = "You're building strong momentum! Keep the fire burning.";
+            } else {
+                calStreakSubtitle.textContent = "You're on fire! Consistency is transforming your strength and vitality.";
+            }
+        }
+
+        streakCalCurrentDate = new Date();
+        renderStreakCalendar(streakCalCurrentDate, a.active_dates || []);
+
+        modal.hidden = false;
+        document.body.classList.add("sidebar-open");
+    }
+
+    function closeStreakCalendar() {
+        const modal = document.getElementById("streakCalendarModal");
+        if (modal) {
+            modal.hidden = true;
+            document.body.classList.remove("sidebar-open");
+        }
+    }
+
+    function renderStreakCalendar(viewDate, activeDatesList) {
+        const grid = document.getElementById("streakDaysGrid");
+        const monthDisplay = document.getElementById("calMonthDisplay");
+        if (!grid || !monthDisplay) return;
+
+        grid.replaceChildren();
+
+        const year = viewDate.getFullYear();
+        const month = viewDate.getMonth();
+
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        monthDisplay.textContent = `${monthNames[month]} ${year}`;
+
+        const activeSet = new Set(activeDatesList || []);
+
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const startOffset = (firstDay + 6) % 7; // Mon = 0 ... Sun = 6
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < startOffset; i++) {
+            const emptyCell = document.createElement("div");
+            emptyCell.className = "streak-day empty-day";
+            grid.appendChild(emptyCell);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const cellDate = new Date(year, month, day);
+
+            const dayCell = document.createElement("div");
+            dayCell.className = "streak-day";
+
+            const numSpan = document.createElement("span");
+            numSpan.textContent = day;
+            dayCell.appendChild(numSpan);
+
+            const isActive = activeSet.has(dateStr);
+            const isToday = dateStr === todayStr;
+            const isFuture = cellDate > now && !isToday;
+
+            if (isActive) {
+                dayCell.classList.add("active-day");
+                dayCell.title = `Workout session completed on ${dateStr}`;
+                const check = document.createElement("span");
+                check.className = "day-check";
+                check.textContent = "✓";
+                dayCell.appendChild(check);
+            } else if (isFuture) {
+                dayCell.classList.add("future-day");
+            }
+
+            if (isToday) {
+                dayCell.classList.add("today-day");
+                dayCell.title = isActive ? "Today - Routine Completed!" : "Today - Log a session to keep your streak!";
+            }
+
+            grid.appendChild(dayCell);
+        }
+    }
+
+    document.getElementById("navStreakBtn")?.addEventListener("click", () => {
+        loadAnalytics().then(() => openStreakCalendar());
+    });
+
+    document.getElementById("closeStreakModalBtn")?.addEventListener("click", closeStreakCalendar);
+
+    document.getElementById("streakCalendarModal")?.addEventListener("click", (e) => {
+        if (e.target.id === "streakCalendarModal") {
+            closeStreakCalendar();
+        }
+    });
+
+    document.getElementById("calPrevMonthBtn")?.addEventListener("click", () => {
+        streakCalCurrentDate.setMonth(streakCalCurrentDate.getMonth() - 1);
+        const a = cachedAnalyticsData || {};
+        renderStreakCalendar(streakCalCurrentDate, a.active_dates || []);
+    });
+
+    document.getElementById("calNextMonthBtn")?.addEventListener("click", () => {
+        streakCalCurrentDate.setMonth(streakCalCurrentDate.getMonth() + 1);
+        const a = cachedAnalyticsData || {};
+        renderStreakCalendar(streakCalCurrentDate, a.active_dates || []);
+    });
 
 
     /* =====================================
@@ -1719,6 +1870,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================== */
 
     hideSidebar();
+    loadAnalytics();
 
     console.log(
         "FitFlow AI frontend initialized successfully."

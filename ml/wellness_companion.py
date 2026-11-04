@@ -160,10 +160,28 @@ def get_user_analytics(user_id):
         }
     ]
 
+    # Best streak calculation
+    sorted_dates = sorted(active_dates)
+    best_streak = 0
+    temp_streak = 0
+    prev_d = None
+    for d in sorted_dates:
+        if prev_d and d == prev_d + timedelta(days=1):
+            temp_streak += 1
+        else:
+            temp_streak = 1
+        if temp_streak > best_streak:
+            best_streak = temp_streak
+        prev_d = d
+    if streak > best_streak:
+        best_streak = streak
+
     return {
         "total_plans": total_plans,
         "completed_sessions": completed_sessions,
         "current_streak": streak,
+        "best_streak": max(best_streak, streak),
+        "active_dates": [d.isoformat() for d in sorted_dates],
         "total_calories_burned": total_calories,
         "weekly_activity": weekday_counts,
         "badges": badges

@@ -2492,3 +2492,378 @@ body.auth-page {
         padding: 12px 0;
     }
 }
+
+
+/* =========================================
+   FEATURE: NAVBAR STREAK PILL & HTML/CSS FLAME LOGO
+========================================= */
+
+.streak-nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #FAF8F5;
+    border: 1px solid #ECE7DF;
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: var(--forest);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1;
+}
+
+.streak-nav-pill:hover {
+    background: #FFF9F2;
+    border-color: #F6BA8B;
+    box-shadow: 0 4px 14px rgba(230, 81, 0, 0.12);
+    transform: translateY(-1px);
+}
+
+.streak-pill-text strong {
+    font-weight: 800;
+    color: #D35400;
+}
+
+/* Pure HTML & CSS Animated Flame Icon */
+.css-flame-icon {
+    position: relative;
+    width: 16px;
+    height: 20px;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.css-flame-icon .flame-outer {
+    position: absolute;
+    bottom: 0;
+    left: 1px;
+    width: 14px;
+    height: 19px;
+    background: linear-gradient(180deg, #FF6F00 0%, #E65100 60%, #BF360C 100%);
+    border-radius: 50% 50% 35% 35% / 60% 60% 40% 40%;
+    transform-origin: bottom center;
+    animation: flameFlicker 1.5s ease-in-out infinite alternate;
+    box-shadow: 0 0 8px rgba(255, 111, 0, 0.45);
+}
+
+.css-flame-icon .flame-inner {
+    position: absolute;
+    bottom: 1px;
+    left: 3px;
+    width: 10px;
+    height: 13px;
+    background: linear-gradient(180deg, #FFD54F 0%, #FFA000 70%, #E65100 100%);
+    border-radius: 50% 50% 40% 40% / 65% 65% 35% 35%;
+    transform-origin: bottom center;
+    animation: flamePulse 1.1s ease-in-out infinite alternate;
+}
+
+.css-flame-icon .flame-core {
+    position: absolute;
+    bottom: 1px;
+    left: 5px;
+    width: 6px;
+    height: 8px;
+    background: #FFFDE7;
+    border-radius: 50%;
+    opacity: 0.95;
+    box-shadow: 0 0 4px #FFFFFF;
+}
+
+.css-flame-icon.large {
+    width: 34px;
+    height: 42px;
+}
+
+.css-flame-icon.large .flame-outer {
+    width: 30px;
+    height: 40px;
+    left: 2px;
+    box-shadow: 0 0 16px rgba(255, 111, 0, 0.55);
+}
+
+.css-flame-icon.large .flame-inner {
+    width: 20px;
+    height: 27px;
+    left: 7px;
+    bottom: 2px;
+}
+
+.css-flame-icon.large .flame-core {
+    width: 12px;
+    height: 16px;
+    left: 11px;
+    bottom: 2px;
+}
+
+@keyframes flameFlicker {
+    0% { transform: scale(1) rotate(-1.5deg); }
+    50% { transform: scale(1.05, 0.95) rotate(1deg); }
+    100% { transform: scale(0.96, 1.04) rotate(-1deg); }
+}
+
+@keyframes flamePulse {
+    0% { transform: scale(1); opacity: 0.85; }
+    100% { transform: scale(1.12, 1.15); opacity: 1; }
+}
+
+
+/* =========================================
+   STREAK & CONSISTENCY CALENDAR MODAL
+========================================= */
+
+.streak-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(16, 44, 36, 0.65);
+    backdrop-filter: blur(6px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.streak-modal-overlay[hidden] {
+    display: none !important;
+}
+
+.streak-modal-card {
+    background: #FFFFFF;
+    border-radius: 22px;
+    width: 100%;
+    max-width: 480px;
+    padding: 28px 30px;
+    box-shadow: 0 25px 60px rgba(16, 44, 36, 0.22);
+    position: relative;
+    animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.streak-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.streak-header-hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.streak-kicker {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #E65100;
+    text-transform: uppercase;
+}
+
+.streak-hero-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--forest);
+    margin: 2px 0 4px 0;
+    line-height: 1.1;
+}
+
+.streak-hero-sub {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+    margin: 0;
+}
+
+.streak-close-btn {
+    background: #FAF8F5;
+    border: 1px solid #ECE7DF;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--forest);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.streak-close-btn:hover {
+    background: #F0ECE4;
+}
+
+/* Stats Ribbon */
+.streak-stats-ribbon {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: #FAF8F5;
+    border: 1px solid #ECE7DF;
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.streak-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.streak-stat-item.streak-stat-divider {
+    border-left: 1px solid #EAE5DC;
+    border-right: 1px solid #EAE5DC;
+}
+
+.streak-stat-num {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1.1;
+}
+
+.streak-stat-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+/* Calendar Section */
+.streak-calendar-wrapper {
+    background: #FFFFFF;
+    border: 1px solid #ECE7DF;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 18px;
+}
+
+.streak-cal-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.cal-month-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--forest);
+    margin: 0;
+}
+
+.cal-nav-btn {
+    background: #FAF8F5;
+    border: 1px solid #ECE7DF;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--forest);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.cal-nav-btn:hover {
+    background: #ECE7DF;
+}
+
+.streak-weekdays-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #8C9E92;
+    margin-bottom: 8px;
+}
+
+.streak-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.streak-day {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #4A5D52;
+    background: #FAF8F5;
+    position: relative;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.streak-day.empty-day {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.streak-day.active-day {
+    background: #EAF4EC;
+    color: #1B5E20;
+    border-color: #A3D4AB;
+    font-weight: 700;
+}
+
+.streak-day.active-day .day-check {
+    font-size: 9px;
+    color: #1B5E20;
+    line-height: 1;
+    margin-top: 1px;
+}
+
+.streak-day.today-day {
+    border-color: #E65100;
+    color: #E65100;
+    font-weight: 800;
+}
+
+.streak-day.future-day {
+    color: #B2BFB6;
+    background: transparent;
+}
+
+/* Footer / Guidance */
+.streak-modal-footer {
+    border-top: 1px dashed #ECE7DF;
+    padding-top: 14px;
+}
+
+.streak-consistency-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 11.5px;
+    color: #556B5D;
+    line-height: 1.45;
+}
+
+.streak-consistency-tip .tip-star {
+    color: #E65100;
+    font-size: 11px;
+}

@@ -46,6 +46,14 @@
 
         <div class="nav-actions">
             {% if current_user.is_authenticated %}
+                <button type="button" class="streak-nav-pill" id="navStreakBtn" aria-label="View Streak Calendar" title="Click to view your Consistency &amp; Streak Calendar">
+                    <div class="css-flame-icon">
+                        <span class="flame-outer"></span>
+                        <span class="flame-inner"></span>
+                        <span class="flame-core"></span>
+                    </div>
+                    <span class="streak-pill-text"><strong id="navStreakCount">0</strong> d streak</span>
+                </button>
                 <span class="user-greeting">Hi, <strong>{{ current_user.name.split()[0] if current_user.name else 'Member' }}</strong></span>
                 <a href="{{ url_for('logout') }}" class="nav-button nav-logout">Logout ⎋</a>
             {% else %}
@@ -1095,6 +1103,69 @@
                     <input type="checkbox" id="sessionVoiceToggle" checked>
                     <span>Voice Guidance &amp; Audio Countdown</span>
                 </label>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- STREAK & CONSISTENCY CALENDAR MODAL -->
+    <div class="streak-modal-overlay" id="streakCalendarModal" hidden>
+        <div class="streak-modal-card">
+            <div class="streak-modal-header">
+                <div class="streak-header-hero">
+                    <div class="css-flame-icon large">
+                        <span class="flame-outer"></span>
+                        <span class="flame-inner"></span>
+                        <span class="flame-core"></span>
+                    </div>
+                    <div>
+                        <span class="streak-kicker">✦ CONSISTENCY PROTOCOL</span>
+                        <h3 class="streak-hero-title"><span id="calStreakVal">0</span> Day Streak</h3>
+                        <p class="streak-hero-sub" id="calStreakSubtitle">Consistency is the bridge between goals and accomplishment.</p>
+                    </div>
+                </div>
+                <button type="button" class="streak-close-btn" id="closeStreakModalBtn" aria-label="Close calendar">&times;</button>
+            </div>
+
+            <!-- Stats Ribbon -->
+            <div class="streak-stats-ribbon">
+                <div class="streak-stat-item">
+                    <span class="streak-stat-num" id="calActiveStreak">0</span>
+                    <span class="streak-stat-lbl">Active Streak</span>
+                </div>
+                <div class="streak-stat-item streak-stat-divider">
+                    <span class="streak-stat-num" id="calBestStreak">0</span>
+                    <span class="streak-stat-lbl">Personal Best</span>
+                </div>
+                <div class="streak-stat-item">
+                    <span class="streak-stat-num" id="calTotalSessions">0</span>
+                    <span class="streak-stat-lbl">Workouts Completed</span>
+                </div>
+            </div>
+
+            <!-- Calendar Section -->
+            <div class="streak-calendar-wrapper">
+                <div class="streak-cal-controls">
+                    <button type="button" class="cal-nav-btn" id="calPrevMonthBtn" aria-label="Previous Month">‹</button>
+                    <h4 class="cal-month-heading" id="calMonthDisplay">Month Year</h4>
+                    <button type="button" class="cal-nav-btn" id="calNextMonthBtn" aria-label="Next Month">›</button>
+                </div>
+
+                <div class="streak-weekdays-row">
+                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                </div>
+
+                <div class="streak-days-grid" id="streakDaysGrid">
+                    <!-- Populated dynamically by script.js -->
+                </div>
+            </div>
+
+            <!-- Milestone & Consistency Guidance -->
+            <div class="streak-modal-footer">
+                <div class="streak-consistency-tip">
+                    <span class="tip-star">✦</span>
+                    <span><strong>Consistency Rule:</strong> Completing at least 3 sessions per week builds sustainable cardiovascular health, mobility, and muscle memory.</span>
+                </div>
             </div>
         </div>
     </div>
