@@ -685,6 +685,46 @@
 
                 </div>
 
+                <!-- PROGRESS & CONSISTENCY DASHBOARD -->
+                <div class="analytics-dashboard" id="analyticsDashboard">
+                    <div class="analytics-metrics-grid">
+                        <div class="analytics-card">
+                            <span class="analytics-icon">🔥</span>
+                            <div class="analytics-info">
+                                <span class="analytics-num" id="statStreak">0</span>
+                                <span class="analytics-label">Active Streak</span>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <span class="analytics-icon">⚡</span>
+                            <div class="analytics-info">
+                                <span class="analytics-num" id="statCalories">0</span>
+                                <span class="analytics-label">Est. Calories</span>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <span class="analytics-icon">🏆</span>
+                            <div class="analytics-info">
+                                <span class="analytics-num" id="statCompleted">0</span>
+                                <span class="analytics-label">Completed</span>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <span class="analytics-icon">📋</span>
+                            <div class="analytics-info">
+                                <span class="analytics-num" id="statPlans">0</span>
+                                <span class="analytics-label">Plans Saved</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Milestones Badges -->
+                    <div class="badges-section">
+                        <h4 class="badges-title">Achievement Badges</h4>
+                        <div class="badges-grid" id="badgesGrid"></div>
+                    </div>
+                </div>
+
                 <div
                     class="utility-content"
                     id="historyContent"
@@ -1007,6 +1047,57 @@
         <small>© 2026 FitFlow AI. All rights reserved.</small>
 
     </footer>
+
+
+    <!-- INTERACTIVE WORKOUT SESSION MODAL -->
+    <div class="session-modal-overlay" id="sessionModal" hidden>
+        <div class="session-modal-card">
+            <div class="session-modal-header">
+                <div>
+                    <span class="session-badge" id="sessionTypeBadge">YOGA &bull; 30 MIN</span>
+                    <h3 id="sessionRoutineTitle">Active Session</h3>
+                </div>
+                <button type="button" class="session-close-btn" id="closeSessionBtn" aria-label="Close session">&times;</button>
+            </div>
+
+            <div class="session-progress-bar-container">
+                <div class="session-progress-bar" id="sessionProgressBar" style="width: 0%;"></div>
+            </div>
+
+            <div class="session-step-info">
+                <span id="sessionStepCounter">Exercise 1 of 6</span>
+                <span id="sessionStepCategory">Flexibility</span>
+            </div>
+
+            <div class="session-main-display">
+                <h2 id="sessionExerciseName">Downward-Facing Dog</h2>
+                <p id="sessionExerciseSub" class="session-exercise-sub">Adho Mukha Svanasana</p>
+
+                <!-- Big Countdown Timer -->
+                <div class="session-timer-box">
+                    <span class="session-timer-digits" id="sessionTimer">00:45</span>
+                    <span class="session-timer-label" id="sessionTimerPhase">WORK</span>
+                </div>
+
+                <p id="sessionExerciseInstructions" class="session-instructions">
+                    Press palms firmly into the mat, lift your hips towards the ceiling, and lengthen your spine.
+                </p>
+            </div>
+
+            <div class="session-controls">
+                <button type="button" class="session-btn session-btn-secondary" id="sessionPrevBtn">⏮ Previous</button>
+                <button type="button" class="session-btn session-btn-primary" id="sessionPlayPauseBtn">⏸ Pause</button>
+                <button type="button" class="session-btn session-btn-secondary" id="sessionNextBtn">Skip ⏭</button>
+            </div>
+
+            <div class="session-audio-toggle">
+                <label>
+                    <input type="checkbox" id="sessionVoiceToggle" checked>
+                    <span>Voice Guidance &amp; Audio Countdown</span>
+                </label>
+            </div>
+        </div>
+    </div>
 
 
     <!-- JAVASCRIPT -->

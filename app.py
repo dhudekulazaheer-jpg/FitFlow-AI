@@ -32,6 +32,8 @@ from models import (
     PlanHistory
 )
 from ml.plan_generator import PlanGenerator
+from ml.exercise_swapper import exercise_swapper
+from ml.wellness_companion import get_recovery_nutrition, get_user_analytics
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -313,6 +315,14 @@ def generate_plan():
 
         # Convert result into standard JSON-compatible data
         result = json.loads(app.json.dumps(result))
+
+        # Attach personalized post-workout recovery nutrition guidance
+        user_weight = current_user.profile.weight if (current_user.profile and current_user.profile.weight) else 70.0
+        result["recovery_nutrition"] = get_recovery_nutrition(
+            weight_kg=user_weight,
+            duration_min=duration,
+            goal=goal
+        )
 
         generated_at_dt = datetime.utcnow()
         generated_at = generated_at_dt.isoformat()
@@ -643,6 +653,144 @@ def calculate_bmi():
         "success": True,
         "bmi": round(bmi, 2),
         "category": category
+    })
+
+
+# =========================================
+# SMART EXERCISE SWAPPER
+# =========================================
+
+@app.route("/api/swap-exercise", methods=["POST"])
+@login_required
+def swap_exercise():
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"success": False, "error": "Invalid request payload."}), 400
+
+    plan_id = data.get("plan_id")
+    current_name = data.get("current_name")
+    is_yoga = bool(data.get("is_yoga", False))
+    body_part = data.get("body_part")
+    category = data.get("category")
+    target = data.get("target")
+    equipment = data.get("equipment", "none")
+
+    if is_yoga:
+        new_item = exercise_swapper.get_yoga_alternative(current_name=current_name, category=category)
+    else:
+        new_item = exercise_swapper.get_workout_alternative(
+            current_name=current_name,
+            body_part=body_part,
+            target_muscle=target,
+            equipment=equipment
+        )
+
+    if not new_item:
+        return jsonify({"success": False, "error": "No alternative exercise found."}), 404
+
+    # If plan_id is provided, update the saved plan in the database
+    if plan_id:
+        saved_plan = GeneratedPlan.query.filter_by(id=plan_id, user_id=current_user.id).first()
+        if saved_plan:
+            try:
+                plan_dict = saved_plan.get_plan_json()
+
+                def replace_in_obj(obj):
+                    if isinstance(obj, dict):
+                        name_val = obj.get("name") or obj.get("english_name")
+                        if name_val and str(name_val).strip().lower() == str(current_name).strip().lower():
+                            obj.update(new_item)
+                            return True
+                        for k, v in obj.items():
+                            if replace_in_obj(v):
+                                return True
+                    elif isinstance(obj, list):
+                        for item in obj:
+                            if replace_in_obj(item):
+                                return True
+                    return False
+
+                replace_in_obj(plan_dict)
+                saved_plan.plan_data = json.dumps(plan_dict)
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                app.logger.warning(f"Could not update plan JSON on swap: {e}")
+
+    return jsonify({
+        "success": True,
+        "new_exercise": new_item,
+        "message": f"Successfully swapped with {new_item.get('name')}!"
+    })
+
+
+# =========================================
+# COMPLETE SESSION LOGGER
+# =========================================
+
+@app.route("/api/complete-session", methods=["POST"])
+@login_required
+def complete_session():
+    data = request.get_json(silent=True) or {}
+    plan_id = data.get("plan_id")
+    routine_name = data.get("routine_name", "Fitness Routine")
+    duration = data.get("duration", 30)
+
+    try:
+        history_entry = PlanHistory(
+            user_id=current_user.id,
+            plan_id=plan_id,
+            activity=f"Completed Session: {routine_name} ({duration}m)",
+            created_at=datetime.utcnow()
+        )
+        db.session.add(history_entry)
+        db.session.commit()
+
+        analytics = get_user_analytics(current_user.id)
+        return jsonify({
+            "success": True,
+            "message": "Great job! Workout completed and logged.",
+            "analytics": analytics
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": "Could not log session completion."}), 500
+
+
+# =========================================
+# USER ANALYTICS & STREAKS
+# =========================================
+
+@app.route("/api/analytics", methods=["GET"])
+@login_required
+def get_analytics():
+    try:
+        analytics = get_user_analytics(current_user.id)
+        return jsonify({
+            "success": True,
+            "analytics": analytics
+        })
+    except Exception as e:
+        app.logger.exception("Failed to retrieve analytics")
+        return jsonify({"success": False, "error": "Could not calculate analytics."}), 500
+
+
+# =========================================
+# RECOVERY NUTRITION CALCULATOR
+# =========================================
+
+@app.route("/api/nutrition", methods=["POST"])
+@login_required
+def calculate_nutrition():
+    data = request.get_json(silent=True) or {}
+    user_weight = current_user.profile.weight if (current_user.profile and current_user.profile.weight) else 70.0
+    duration = data.get("duration", 30)
+    goal = data.get("goal") or (current_user.profile.fitness_goal if current_user.profile else "general_fitness")
+
+    nutrition = get_recovery_nutrition(weight_kg=user_weight, duration_min=duration, goal=goal)
+    return jsonify({
+        "success": True,
+        "nutrition": nutrition
     })
 
 

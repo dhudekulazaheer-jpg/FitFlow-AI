@@ -542,6 +542,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const heading = document.createElement("h3");
         heading.textContent = "Your personalized routine is ready!";
 
+        currentActivePlanId = result.plan_id || null;
+        currentActivePlan = result;
+
         const details = document.createElement("p");
 
         details.textContent =
@@ -550,6 +553,19 @@ document.addEventListener("DOMContentLoaded", () => {
             `Duration: ${result.requested_duration_minutes ?? "—"} minutes`;
 
         planSummary.append(heading, details);
+
+        // Add Interactive Session Player Button
+        const sessionExercises = extractSessionExercises(result);
+        if (sessionExercises.length > 0) {
+            const startBtn = document.createElement("button");
+            startBtn.type = "button";
+            startBtn.className = "start-session-btn";
+            startBtn.innerHTML = "<span>▶</span> Start Interactive Session";
+            startBtn.addEventListener("click", () => {
+                launchInteractiveSession(sessionExercises, result);
+            });
+            planSummary.appendChild(startBtn);
+        }
 
         // Render Safety Warnings if any
         if (result.safety_warnings && Array.isArray(result.safety_warnings) && result.safety_warnings.length > 0) {
@@ -595,6 +611,11 @@ document.addEventListener("DOMContentLoaded", () => {
             renderSection("Your Fitness Routine", result);
         }
 
+        // Render Post-Workout Recovery Nutrition Guide (Feature 6)
+        if (result.recovery_nutrition) {
+            renderRecoveryNutrition(result.recovery_nutrition);
+        }
+
         // Render Medical Disclaimer if present
         if (result.disclaimer) {
             const disclaimerBox = document.createElement("div");
@@ -624,6 +645,330 @@ document.addEventListener("DOMContentLoaded", () => {
 
         planContent.appendChild(section);
 
+    }
+
+
+    /* =====================================
+       FEATURE 6: RECOVERY NUTRITION RENDERER
+    ===================================== */
+
+    function renderRecoveryNutrition(nutrition) {
+        if (!nutrition) return;
+
+        const card = document.createElement("div");
+        card.className = "recovery-nutrition-card";
+
+        const title = document.createElement("h4");
+        title.innerHTML = "<span>🥗</span> Post-Workout Recovery &amp; Nutrition Guide";
+        card.appendChild(title);
+
+        const grid = document.createElement("div");
+        grid.className = "recovery-targets-grid";
+
+        grid.innerHTML = `
+            <div class="recovery-target-item">
+                <span class="target-icon">💧</span>
+                <div class="target-info">
+                    <strong>${nutrition.target_water_ml} ml</strong>
+                    <small>Hydration Target</small>
+                </div>
+            </div>
+            <div class="recovery-target-item">
+                <span class="target-icon">🥩</span>
+                <div class="target-info">
+                    <strong>${nutrition.target_protein_g} g</strong>
+                    <small>Protein Target</small>
+                </div>
+            </div>
+            <div class="recovery-target-item">
+                <span class="target-icon">🌾</span>
+                <div class="target-info">
+                    <strong>Carb Replenishment</strong>
+                    <small>${nutrition.carb_ratio}</small>
+                </div>
+            </div>
+        `;
+        card.appendChild(grid);
+
+        if (nutrition.recommended_snacks && nutrition.recommended_snacks.length > 0) {
+            const snacksBox = document.createElement("div");
+            snacksBox.className = "recovery-snacks-box";
+            const snacksTitle = document.createElement("h5");
+            snacksTitle.textContent = "Recommended Whole-Food Snacks:";
+            snacksBox.appendChild(snacksTitle);
+
+            const snacksList = document.createElement("div");
+            snacksList.className = "recovery-snacks-list";
+            nutrition.recommended_snacks.forEach(s => {
+                const sItem = document.createElement("div");
+                sItem.className = "snack-item";
+                sItem.innerHTML = `<strong>${s.title}</strong> — <span>${s.detail}</span>`;
+                snacksList.appendChild(sItem);
+            });
+            snacksBox.appendChild(snacksList);
+            card.appendChild(snacksBox);
+        }
+
+        if (nutrition.electrolyte_tip) {
+            const tip = document.createElement("p");
+            tip.className = "recovery-electrolyte-tip";
+            tip.innerHTML = `<strong>✦ Hydration Tip:</strong> ${nutrition.electrolyte_tip}`;
+            card.appendChild(tip);
+        }
+
+        planContent.appendChild(card);
+    }
+
+
+    /* =====================================
+       FEATURE 1: INTERACTIVE SESSION ENGINE
+    ===================================== */
+
+    let currentActivePlanId = null;
+    let currentActivePlan = null;
+    let sessionTimerInterval = null;
+    let sessionStepIndex = 0;
+    let sessionExercises = [];
+    let sessionIsPaused = false;
+    let sessionSecondsLeft = 45;
+
+    function extractSessionExercises(planObj) {
+        const exercises = [];
+        function recurse(obj, isYoga) {
+            if (!obj) return;
+            if (Array.isArray(obj)) {
+                obj.forEach(item => recurse(item, isYoga));
+            } else if (typeof obj === "object") {
+                if (obj.name && typeof obj.name === "string") {
+                    exercises.push({
+                        name: obj.name,
+                        sub: obj.sanskrit_name || obj.target || (isYoga ? "Yoga Pose" : "Workout Movement"),
+                        category: obj.category || obj.bodyPart || (isYoga ? "Flexibility" : "Strength"),
+                        instructions: obj.instructions || obj.description || "Perform with controlled tempo and mindful breathing.",
+                        isYoga: isYoga,
+                        duration: isYoga ? 60 : 45
+                    });
+                } else {
+                    Object.entries(obj).forEach(([k, v]) => {
+                        const yogaFlag = isYoga || k.toLowerCase().includes("yoga");
+                        recurse(v, yogaFlag);
+                    });
+                }
+            }
+        }
+        recurse(planObj, false);
+        return exercises;
+    }
+
+    function speakText(text) {
+        const voiceToggle = document.getElementById("sessionVoiceToggle");
+        if (voiceToggle && !voiceToggle.checked) return;
+        if (!("speechSynthesis" in window)) return;
+        try {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
+        } catch (e) {
+            console.warn("SpeechSynthesis error:", e);
+        }
+    }
+
+    function launchInteractiveSession(exercises, planObj) {
+        if (!exercises || exercises.length === 0) return;
+        sessionExercises = exercises;
+        sessionStepIndex = 0;
+        sessionIsPaused = false;
+
+        const sessionModal = document.getElementById("sessionModal");
+        if (!sessionModal) return;
+
+        sessionModal.hidden = false;
+        document.body.classList.add("sidebar-open");
+
+        const sessionTypeBadge = document.getElementById("sessionTypeBadge");
+        const sessionRoutineTitle = document.getElementById("sessionRoutineTitle");
+        if (sessionTypeBadge) {
+            sessionTypeBadge.textContent = `${planObj.plan_type || "FITNESS"} • ${planObj.requested_duration_minutes || 30} MIN`;
+        }
+        if (sessionRoutineTitle) {
+            sessionRoutineTitle.textContent = `${formatText(planObj.goal || "Fitness")} Session`;
+        }
+
+        renderCurrentSessionStep();
+    }
+
+    function renderCurrentSessionStep() {
+        clearInterval(sessionTimerInterval);
+
+        if (sessionStepIndex >= sessionExercises.length) {
+            finishSession();
+            return;
+        }
+
+        const step = sessionExercises[sessionStepIndex];
+        sessionSecondsLeft = step.duration || 45;
+
+        const sessionProgressBar = document.getElementById("sessionProgressBar");
+        const sessionStepCounter = document.getElementById("sessionStepCounter");
+        const sessionStepCategory = document.getElementById("sessionStepCategory");
+        const sessionExerciseName = document.getElementById("sessionExerciseName");
+        const sessionExerciseSub = document.getElementById("sessionExerciseSub");
+        const sessionExerciseInstructions = document.getElementById("sessionExerciseInstructions");
+        const sessionPlayPauseBtn = document.getElementById("sessionPlayPauseBtn");
+
+        const pct = Math.round(((sessionStepIndex) / sessionExercises.length) * 100);
+        if (sessionProgressBar) sessionProgressBar.style.width = `${pct}%`;
+        if (sessionStepCounter) sessionStepCounter.textContent = `Exercise ${sessionStepIndex + 1} of ${sessionExercises.length}`;
+        if (sessionStepCategory) sessionStepCategory.textContent = formatText(step.category);
+        if (sessionExerciseName) sessionExerciseName.textContent = step.name;
+        if (sessionExerciseSub) sessionExerciseSub.textContent = step.sub;
+        if (sessionExerciseInstructions) sessionExerciseInstructions.textContent = step.instructions;
+        if (sessionPlayPauseBtn) sessionPlayPauseBtn.textContent = "⏸ Pause";
+
+        updateTimerDisplay();
+        speakText(`Next: ${step.name}`);
+
+        sessionIsPaused = false;
+        sessionTimerInterval = setInterval(() => {
+            if (sessionIsPaused) return;
+            sessionSecondsLeft--;
+            updateTimerDisplay();
+
+            if (sessionSecondsLeft === 3) speakText("Three");
+            if (sessionSecondsLeft === 2) speakText("Two");
+            if (sessionSecondsLeft === 1) speakText("One");
+
+            if (sessionSecondsLeft <= 0) {
+                clearInterval(sessionTimerInterval);
+                sessionStepIndex++;
+                renderCurrentSessionStep();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const sessionTimer = document.getElementById("sessionTimer");
+        if (!sessionTimer) return;
+        const mins = Math.floor(sessionSecondsLeft / 60);
+        const secs = sessionSecondsLeft % 60;
+        sessionTimer.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    async function finishSession() {
+        clearInterval(sessionTimerInterval);
+        const sessionProgressBar = document.getElementById("sessionProgressBar");
+        if (sessionProgressBar) sessionProgressBar.style.width = "100%";
+
+        const sessionExerciseName = document.getElementById("sessionExerciseName");
+        const sessionExerciseSub = document.getElementById("sessionExerciseSub");
+        const sessionTimer = document.getElementById("sessionTimer");
+        const sessionExerciseInstructions = document.getElementById("sessionExerciseInstructions");
+        const sessionControls = document.querySelector(".session-controls");
+
+        if (sessionExerciseName) sessionExerciseName.textContent = "🎉 Session Completed!";
+        if (sessionExerciseSub) sessionExerciseSub.textContent = "Outstanding effort! Your body and mind thank you.";
+        if (sessionTimer) sessionTimer.textContent = "DONE";
+        if (sessionExerciseInstructions) {
+            sessionExerciseInstructions.textContent = "You've successfully finished all exercises in this routine. Progress has been logged to your activity history.";
+        }
+        if (sessionControls) {
+            sessionControls.innerHTML = `<button type="button" class="session-btn session-btn-primary" id="finishCloseBtn">Close & View Progress ✦</button>`;
+            document.getElementById("finishCloseBtn")?.addEventListener("click", closeSessionModal);
+        }
+
+        speakText("Session completed! Fantastic workout.");
+
+        try {
+            await apiRequest("/api/complete-session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    plan_id: currentActivePlanId,
+                    routine_name: currentActivePlan?.plan_type || "Routine",
+                    duration: currentActivePlan?.requested_duration_minutes || 30
+                })
+            });
+        } catch (e) {
+            console.warn("Could not log completed session:", e);
+        }
+    }
+
+    function closeSessionModal() {
+        clearInterval(sessionTimerInterval);
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+        }
+        const sessionModal = document.getElementById("sessionModal");
+        if (sessionModal) sessionModal.hidden = true;
+        document.body.classList.remove("sidebar-open");
+    }
+
+    // Modal listeners
+    document.getElementById("closeSessionBtn")?.addEventListener("click", closeSessionModal);
+
+    document.getElementById("sessionPlayPauseBtn")?.addEventListener("click", () => {
+        sessionIsPaused = !sessionIsPaused;
+        const btn = document.getElementById("sessionPlayPauseBtn");
+        if (btn) btn.textContent = sessionIsPaused ? "▶ Resume" : "⏸ Pause";
+    });
+
+    document.getElementById("sessionNextBtn")?.addEventListener("click", () => {
+        clearInterval(sessionTimerInterval);
+        sessionStepIndex++;
+        renderCurrentSessionStep();
+    });
+
+    document.getElementById("sessionPrevBtn")?.addEventListener("click", () => {
+        if (sessionStepIndex > 0) {
+            clearInterval(sessionTimerInterval);
+            sessionStepIndex--;
+            renderCurrentSessionStep();
+        }
+    });
+
+
+    /* =====================================
+       FEATURE 4: ANALYTICS & BADGES ENGINE
+    ===================================== */
+
+    async function loadAnalytics() {
+        try {
+            const res = await apiRequest("/api/analytics");
+            if (res.success && res.analytics) {
+                const a = res.analytics;
+                const statStreak = document.getElementById("statStreak");
+                const statCalories = document.getElementById("statCalories");
+                const statCompleted = document.getElementById("statCompleted");
+                const statPlans = document.getElementById("statPlans");
+                const badgesGrid = document.getElementById("badgesGrid");
+
+                if (statStreak) statStreak.textContent = a.current_streak;
+                if (statCalories) statCalories.textContent = a.total_calories_burned;
+                if (statCompleted) statCompleted.textContent = a.completed_sessions;
+                if (statPlans) statPlans.textContent = a.total_plans;
+
+                if (badgesGrid && Array.isArray(a.badges)) {
+                    badgesGrid.replaceChildren();
+                    a.badges.forEach(b => {
+                        const badgeEl = document.createElement("div");
+                        badgeEl.className = `badge-chip ${b.unlocked ? "unlocked" : "locked"}`;
+                        badgeEl.innerHTML = `
+                            <span class="badge-chip-icon">${b.icon}</span>
+                            <div class="badge-chip-info">
+                                <strong>${b.name}</strong>
+                                <small>${b.description}</small>
+                                <span class="badge-status-tag">${b.unlocked ? "✓ Unlocked" : "Locked"}</span>
+                            </div>
+                        `;
+                        badgesGrid.appendChild(badgeEl);
+                    });
+                }
+            }
+        } catch (e) {
+            console.warn("Analytics error:", e);
+        }
     }
 
 
@@ -722,6 +1067,45 @@ document.addEventListener("DOMContentLoaded", () => {
                         paragraph.appendChild(
                             createYouTubeLink(itemName, isYoga)
                         );
+
+                        // Smart Exercise Swap Button (Feature 5)
+                        const swapBtn = document.createElement("button");
+                        swapBtn.type = "button";
+                        swapBtn.className = "exercise-swap-btn";
+                        swapBtn.innerHTML = "<span>⇄</span> Swap";
+                        swapBtn.title = "Find an alternative exercise / pose";
+                        swapBtn.addEventListener("click", async (e) => {
+                            e.preventDefault();
+                            swapBtn.disabled = true;
+                            swapBtn.textContent = "Swapping...";
+                            try {
+                                const swapRes = await apiRequest("/api/swap-exercise", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({
+                                        plan_id: currentActivePlanId,
+                                        current_name: itemName,
+                                        is_yoga: isYoga,
+                                        category: data.category || data.category_name,
+                                        body_part: data.bodyPart || data.body_part,
+                                        target: data.target
+                                    })
+                                });
+                                if (swapRes.success && swapRes.new_exercise) {
+                                    name.textContent = formatText(swapRes.new_exercise.name);
+                                    swapBtn.textContent = "✓ Swapped";
+                                    setTimeout(() => {
+                                        swapBtn.innerHTML = "<span>⇄</span> Swap";
+                                        swapBtn.disabled = false;
+                                    }, 2000);
+                                }
+                            } catch (err) {
+                                console.error("Swap failed:", err);
+                                swapBtn.innerHTML = "<span>⇄</span> Swap";
+                                swapBtn.disabled = false;
+                            }
+                        });
+                        paragraph.appendChild(swapBtn);
                     }
 
                     container.appendChild(paragraph);
@@ -982,6 +1366,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================== */
 
     async function loadHistory() {
+
+        loadAnalytics();
 
         showMessage(historyContent, "Loading your activity history...", "loading-message");
 
