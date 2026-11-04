@@ -114,10 +114,20 @@ python test_advanced_features.py
 
 ---
 
-## 👥 Contributors
+## 👥 Contributors & Credits
 
-* **Zaheer Dhudekula** ([@dhudekulazaheer-jpg](https://github.com/dhudekulazaheer-jpg)) – *Core Developer & Full Stack Engineering*
-* **Rajesh** ([@rajesh4275](https://github.com/rajesh4275)) – *Repository Owner & Maintainer*
+* **Rajesh** ([@rajesh4275](https://github.com/rajesh4275)) – **Original Creator & Foundational Architecture**
+  * Conceptualized and established the original FitFlow AI project foundation.
+  * Curated foundational workout and yoga exercise datasets.
+  * Implemented the initial rule-based plan generator and base user interface.
+
+* **Zaheer Dhudekula** ([@dhudekulazaheer-jpg](https://github.com/dhudekulazaheer-jpg)) – **Feature Engineering, Safety & Modernization**
+  * Implemented MySQL 8.0 relational database architecture, authentication, and user data isolation.
+  * Built the clinical health assessment screening engine and contraindication safety logic (`ml/health_safety.py`).
+  * Developed the 7-day structured weekly program generator and dynamic warm-up/cool-down protocols.
+  * Implemented progressive overload intelligence (`ml/progression_advisor.py`) and smart exercise swapping.
+  * Created the social friends connection system, High-Five kudos, and privacy-preserving streak leaderboard.
+  * Built the Web Audio API interval chimes, sticky frosted-glass navigation bar, and handcrafted CSS vector art icon system.
 
 ---
 
