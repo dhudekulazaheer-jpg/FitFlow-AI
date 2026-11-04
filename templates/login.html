@@ -14,68 +14,164 @@
 
 <body class="auth-page">
 
-    <div class="auth-container">
-        <div class="auth-card">
+    <div class="auth-wrapper">
 
-            <div class="auth-header">
-                <a href="/" class="logo">
-                    <span class="logo-icon">✦</span>
-                    <span>FitFlow<span class="logo-ai"> AI</span></span>
-                </a>
-                <h2>Welcome Back</h2>
-                <p>Sign in to continue your personalized wellness journey</p>
-            </div>
+        <!-- LEFT 2D ANIMATED ARTWORK: YOGA & MINDFULNESS -->
+        <aside class="auth-art-side auth-art-left" aria-hidden="true">
+            <div class="art-graphic-wrap art-float-left">
+                <svg class="art-svg" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Concentric Ambient Glow Rings -->
+                    <circle class="art-ring ring-1" cx="140" cy="140" r="115" stroke="#A9C4A7" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.45"/>
+                    <circle class="art-ring ring-2" cx="140" cy="140" r="88" fill="#DCE9DA" fill-opacity="0.35"/>
+                    <circle class="art-ring ring-3" cx="140" cy="140" r="62" fill="#FFFFFF" fill-opacity="0.55"/>
 
-            <!-- Flash Messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="flash-messages">
-                        {% for category, message in messages %}
-                            <div class="flash-alert flash-{{ category }}">{{ message }}</div>
-                        {% endfor %}
+                    <!-- Decorative Botanical Leaves -->
+                    <path class="art-leaf leaf-left" d="M60 170 C50 145, 80 135, 95 155 C90 170, 75 180, 60 170 Z" fill="#A9C4A7" opacity="0.75"/>
+                    <path class="art-leaf leaf-right" d="M220 170 C230 145, 200 135, 185 155 C190 170, 205 180, 220 170 Z" fill="#A9C4A7" opacity="0.75"/>
+                    <path class="art-leaf leaf-stem" d="M140 220 Q140 185 140 160" stroke="#285747" stroke-width="2.5" stroke-linecap="round"/>
+
+                    <!-- 2D Minimalist Yoga Silhouette -->
+                    <!-- Head & Crown -->
+                    <circle cx="140" cy="92" r="11" fill="#183D32"/>
+                    <!-- Neck -->
+                    <rect x="138" y="102" width="4" height="6" rx="2" fill="#183D32"/>
+                    <!-- Torso -->
+                    <path d="M127 114 C127 108, 153 108, 153 114 L149 146 C149 148, 131 148, 131 146 Z" fill="#183D32"/>
+                    <!-- Arms in Prayer / Lotus posture -->
+                    <path d="M128 116 C115 124, 114 136, 126 142 C132 144, 136 138, 136 134" stroke="#183D32" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+                    <path d="M152 116 C165 124, 166 136, 154 142 C148 144, 144 138, 144 134" stroke="#183D32" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+                    <!-- Hands clasped -->
+                    <circle cx="140" cy="136" r="3.5" fill="#285747"/>
+                    <!-- Folded Cross-Legged Base -->
+                    <path d="M96 168 C102 152, 132 150, 140 156 C148 150, 178 152, 184 168 C186 173, 178 178, 168 177 C152 175, 148 173, 140 173 C132 173, 128 175, 112 177 C102 178, 94 173, 96 168 Z" fill="#183D32"/>
+
+                    <!-- Floating Sun / Sparkle Accents -->
+                    <circle class="art-sparkle sparkle-1" cx="80" cy="80" r="3" fill="#E5A93B"/>
+                    <circle class="art-sparkle sparkle-2" cx="205" cy="75" r="2.5" fill="#285747"/>
+                    <polygon class="art-sparkle sparkle-3" points="140,54 142,60 148,62 142,64 140,70 138,64 132,62 138,60" fill="#E5A93B"/>
+                </svg>
+
+                <div class="art-badge badge-left">
+                    <span class="badge-icon">🧘</span>
+                    <div class="badge-text">
+                        <strong>Mindful Flow</strong>
+                        <small>Adaptive Yoga &amp; Balance</small>
                     </div>
-                {% endif %}
-            {% endwith %}
-
-            <form method="POST" action="{{ url_for('login') }}" class="auth-form">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                <div class="form-group">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        class="form-input"
-                        placeholder="you@example.com"
-                        required
-                        autocomplete="email"
-                    >
                 </div>
-
-                <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        class="form-input"
-                        placeholder="Enter your password"
-                        required
-                        autocomplete="current-password"
-                    >
-                </div>
-
-                <button type="submit" class="generate-button auth-button">
-                    Sign In <span>✦</span>
-                </button>
-            </form>
-
-            <div class="auth-footer">
-                <p>Don't have an account? <a href="{{ url_for('register') }}">Create an account ↗</a></p>
             </div>
+        </aside>
 
+        <!-- CENTER LOGIN FORM -->
+        <div class="auth-container">
+            <div class="auth-card">
+
+                <div class="auth-header">
+                    <a href="/" class="logo">
+                        <span class="logo-icon">✦</span>
+                        <span>FitFlow<span class="logo-ai"> AI</span></span>
+                    </a>
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to continue your personalized wellness journey</p>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="flash-alert flash-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="{{ url_for('login') }}" class="auth-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-input"
+                            placeholder="you@example.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-input"
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+
+                    <button type="submit" class="generate-button auth-button">
+                        Sign In <span>✦</span>
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="{{ url_for('register') }}">Create an account ↗</a></p>
+                </div>
+
+            </div>
         </div>
+
+        <!-- RIGHT 2D ANIMATED ARTWORK: WORKOUT & STRENGTH -->
+        <aside class="auth-art-side auth-art-right" aria-hidden="true">
+            <div class="art-graphic-wrap art-float-right">
+                <svg class="art-svg" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Concentric Energy Rings -->
+                    <circle class="art-ring ring-1" cx="140" cy="140" r="115" stroke="#E5A93B" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4"/>
+                    <circle class="art-ring ring-2" cx="140" cy="140" r="88" fill="#F7F5EF" fill-opacity="0.6"/>
+                    <circle class="art-ring ring-3" cx="140" cy="140" r="62" fill="#DCE9DA" fill-opacity="0.45"/>
+
+                    <!-- Dynamic Cardio / Vitality Wave -->
+                    <path class="art-wave" d="M60 140 L105 140 L120 110 L135 175 L150 120 L165 155 L175 140 L220 140" stroke="#A9C4A7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+
+                    <!-- 2D Geometric Kettlebell & Dumbbell Motif -->
+                    <!-- Kettlebell Body -->
+                    <path d="M122 135 C122 120, 158 120, 158 135 C164 148, 164 168, 155 178 C148 184, 132 184, 125 178 C116 168, 116 148, 122 135 Z" fill="#183D32"/>
+                    <!-- Kettlebell Handle -->
+                    <path d="M129 125 C129 108, 151 108, 151 125" stroke="#183D32" stroke-width="5" stroke-linecap="round" fill="none"/>
+                    <!-- Kettlebell Core Emblem -->
+                    <circle cx="140" cy="155" r="9" fill="#285747"/>
+                    <polygon points="140,149 142,153 147,155 142,157 140,161 138,157 133,155 138,153" fill="#E5A93B"/>
+
+                    <!-- Floating Athletic Accents: Kinetic Dumbbell -->
+                    <g class="art-dumbbell" transform="translate(140, 75) rotate(-15)">
+                        <rect x="-18" y="-3.5" width="36" height="7" rx="3.5" fill="#285747"/>
+                        <rect x="-24" y="-12" width="7" height="24" rx="3.5" fill="#183D32"/>
+                        <rect x="-29" y="-9" width="6" height="18" rx="3" fill="#A9C4A7"/>
+                        <rect x="17" y="-12" width="7" height="24" rx="3.5" fill="#183D32"/>
+                        <rect x="23" y="-9" width="6" height="18" rx="3" fill="#A9C4A7"/>
+                    </g>
+
+                    <!-- Orbiting Energy Dots & Sparkles -->
+                    <circle class="art-sparkle sparkle-1" cx="72" cy="95" r="3" fill="#285747"/>
+                    <circle class="art-sparkle sparkle-2" cx="215" cy="180" r="3" fill="#E5A93B"/>
+                    <polygon class="art-sparkle sparkle-3" points="208,82 210,87 215,88 210,90 208,95 206,90 201,88 206,87" fill="#E5A93B"/>
+                </svg>
+
+                <div class="art-badge badge-right">
+                    <span class="badge-icon">⚡</span>
+                    <div class="badge-text">
+                        <strong>Smart Workouts</strong>
+                        <small>AI-Targeted Calorie Burn</small>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
     </div>
 
 </body>
