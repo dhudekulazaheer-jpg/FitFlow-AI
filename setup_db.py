@@ -1,47 +1,37 @@
 import os
-import pymysql
-from urllib.parse import unquote
+import sys
 from dotenv import load_dotenv
 
 load_dotenv()
 
-database_url = os.getenv("DATABASE_URL", "mysql+pymysql://root:password@localhost/fitflow_ai")
+# Import the configured Flask app and SQLAlchemy db
+from app import app
+from models import db
 
-try:
-    prefix, rest = database_url.split("://", 1)
-    auth, host_db = rest.split("@", 1)
-    username, password = auth.split(":", 1) if ":" in auth else (auth, "")
-    username = unquote(username)
-    password = unquote(password)
-    host_port, dbname = host_db.split("/", 1)
-    host, port = host_port.split(":", 1) if ":" in host_port else (host_port, 3306)
-    port = int(port)
-except Exception as e:
-    print(f"Error parsing DATABASE_URL: {e}")
-    username, password, host, port, dbname = "root", "", "localhost", 3306, "fitflow_ai"
 
-print(f"Connecting to MySQL at {host}:{port} with user '{username}'...")
-
-try:
-    conn = pymysql.connect(
-        host=host,
-        user=username,
-        password=password,
-        port=port,
-        charset="utf8mb4"
-    )
-    with conn.cursor() as cursor:
-        cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{dbname}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
-        print(f"Database `{dbname}` is ready!")
-    conn.close()
-
-    # Create tables using SQLAlchemy
-    from app import app
-    from models import db
+def init_database():
+    """
+    Initializes all SQLAlchemy database tables non-destructively
+    in the configured database (e.g. Aiven MySQL defaultdb or local MySQL).
+    Does NOT attempt to run 'CREATE DATABASE', which fails under Aiven's managed user privileges.
+    """
+    print("=" * 60)
+    print("FITFLOW AI - DATABASE TABLE INITIALIZATION")
+    print("=" * 60)
 
     with app.app_context():
-        db.create_all()
-        print("All database tables created successfully!")
+        try:
+            print("Connecting to database and verifying schema...")
+            db.create_all()
+            print("✓ All database tables successfully initialized and verified!")
+            print("✓ Existing records (if any) are completely preserved.")
+            return True
+        except Exception as err:
+            print(f"❌ Database initialization failed: {err}")
+            return False
 
-except Exception as err:
-    print(f"Failed to setup database: {err}")
+
+if __name__ == "__main__":
+    success = init_database()
+    if not success:
+        sys.exit(1)

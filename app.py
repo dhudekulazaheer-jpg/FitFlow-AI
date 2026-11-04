@@ -22,7 +22,14 @@ from flask_login import (
 )
 from flask_wtf.csrf import CSRFProtect
 
-from config import SECRET_KEY, DATABASE_URL
+from config import (
+    SECRET_KEY,
+    DATABASE_URL,
+    SQLALCHEMY_ENGINE_OPTIONS,
+    SESSION_COOKIE_SECURE,
+    SESSION_COOKIE_HTTPONLY,
+    SESSION_COOKIE_SAMESITE
+)
 from models import (
     db,
     User,
@@ -44,6 +51,10 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = SQLALCHEMY_ENGINE_OPTIONS
+app.config["SESSION_COOKIE_SECURE"] = SESSION_COOKIE_SECURE
+app.config["SESSION_COOKIE_HTTPONLY"] = SESSION_COOKIE_HTTPONLY
+app.config["SESSION_COOKIE_SAMESITE"] = SESSION_COOKIE_SAMESITE
 
 # Initialize extensions
 db.init_app(app)

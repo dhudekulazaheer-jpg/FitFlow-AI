@@ -4,12 +4,24 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
 
-# Load .env file
+# Load local .env file if present
 load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = os.getenv("SECRET_KEY", "fitflow-ai-development-secret-key-change-in-production")
+# Detect cloud environment
+IS_PRODUCTION = (
+    os.getenv("RENDER") is not None
+    or os.getenv("FLASK_ENV") == "production"
+    or os.getenv("ENVIRONMENT") == "production"
+)
 
-# Resilient Database Configuration (Cloud DATABASE_URL, local MySQL, or SQLite fallback)
+# Secret Key Configuration
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    if IS_PRODUCTION:
+        raise ValueError("CRITICAL: SECRET_KEY environment variable must be set in production!")
+    SECRET_KEY = "fitflow-ai-development-secret-key-change-in-production"
+
+# Resilient Database Configuration (Aiven MySQL, Cloud DATABASE_URL, local MySQL, or SQLite fallback)
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     db_user = os.getenv("DB_USER")
@@ -22,8 +34,48 @@ if not DATABASE_URL:
     else:
         DATABASE_URL = f"sqlite:///{BASE_DIR / 'fitflow_ai.db'}"
 
-if DATABASE_URL.startswith("postgres://"):
+# Normalize URL prefixes
+if DATABASE_URL.startswith("mysql://"):
+    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
+elif DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# Configure SQLAlchemy Engine & SSL options (crucial for Aiven MySQL)
+SQLALCHEMY_ENGINE_OPTIONS = {
+    "pool_pre_ping": True,
+    "pool_recycle": 280,
+}
+
+# SSL Handling for Aiven MySQL
+ssl_ca_path = os.getenv("AIVEN_CA_PATH") or os.getenv("MYSQL_SSL_CA")
+
+# If CA cert is passed as raw text in environment variable (common in Render)
+aiven_ca_cert_content = os.getenv("AIVEN_CA_CERT") or os.getenv("MYSQL_SSL_CA_CERT")
+if aiven_ca_cert_content and not ssl_ca_path:
+    ca_file = BASE_DIR / "aiven_ca.pem"
+    try:
+        with open(ca_file, "w", encoding="utf-8") as f:
+            f.write(aiven_ca_cert_content.strip())
+        ssl_ca_path = str(ca_file)
+    except Exception as e:
+        print(f"Warning: Could not write runtime CA certificate file: {e}")
+
+if "mysql" in DATABASE_URL.lower():
+    connect_args = {}
+    if ssl_ca_path and os.path.exists(ssl_ca_path):
+        connect_args["ssl"] = {"ca": ssl_ca_path, "check_hostname": True}
+    elif "aivencloud" in DATABASE_URL.lower():
+        # Aiven requires SSL mode
+        connect_args["ssl"] = {"ssl_mode": "REQUIRED"}
+    if connect_args:
+        SQLALCHEMY_ENGINE_OPTIONS["connect_args"] = connect_args
+
+# HTTPS Session Cookie Hardening
+SESSION_COOKIE_SECURE = IS_PRODUCTION
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+REMEMBER_COOKIE_SECURE = IS_PRODUCTION
+REMEMBER_COOKIE_HTTPONLY = True
 
 DATASET_DIR = BASE_DIR / "datasets"
 YOGA_DIR = DATASET_DIR / "yoga"
