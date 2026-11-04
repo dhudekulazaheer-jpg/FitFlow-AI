@@ -114,20 +114,23 @@ python test_advanced_features.py
 
 ---
 
-## 👥 Contributors & Credits
+## 👥 Team Collaboration & Contributions
 
-* **Rajesh** ([@rajesh4275](https://github.com/rajesh4275)) – **Original Creator & Foundational Architecture**
-  * Conceptualized and established the original FitFlow AI project foundation.
-  * Curated foundational workout and yoga exercise datasets.
-  * Implemented the initial rule-based plan generator and base user interface.
+FitFlow AI is the result of collaborative engineering—originating from foundational domain research and prototype architecture, followed by full-scale enterprise modernization, clinical safety systems, and interactive feature engineering.
 
-* **Zaheer Dhudekula** ([@dhudekulazaheer-jpg](https://github.com/dhudekulazaheer-jpg)) – **Feature Engineering, Safety & Modernization**
-  * Implemented MySQL 8.0 relational database architecture, authentication, and user data isolation.
-  * Built the clinical health assessment screening engine and contraindication safety logic (`ml/health_safety.py`).
-  * Developed the 7-day structured weekly program generator and dynamic warm-up/cool-down protocols.
-  * Implemented progressive overload intelligence (`ml/progression_advisor.py`) and smart exercise swapping.
-  * Created the social friends connection system, High-Five kudos, and privacy-preserving streak leaderboard.
-  * Built the Web Audio API interval chimes, sticky frosted-glass navigation bar, and handcrafted CSS vector art icon system.
+### 🌟 Rajesh ([@rajesh4275](https://github.com/rajesh4275)) – Project Founder & Lead System Architect
+* **Vision & Core Conception:** Conceived the foundational FitFlow AI mission to bridge intelligent routine planning with holistic physical wellness and yoga routines.
+* **Domain Research & Exercise Ontology:** Curated and structured the comprehensive repository datasets encompassing multi-tier yoga asanas, resistance movements, calorie expenditure metrics, and anatomical muscle focus taxonomies.
+* **Foundational Plan Generation Engine:** Engineered the original algorithmic framework responsible for matching user fitness levels, equipment availability, and target muscle groups into cohesive routines.
+* **Initial Web Application & Prototype UI:** Designed the baseline Flask MVC application structure, foundational route controllers, responsive front-end layouts, and interactive styling patterns.
+
+### 🚀 Zaheer Dhudekula ([@dhudekulazaheer-jpg](https://github.com/dhudekulazaheer-jpg)) – Co-Developer & Modernization Lead (Advancing FitFlow to the Next Level)
+* **Enterprise Persistence & Security:** Migrated in-memory session structures to an enterprise MySQL 8.0 relational architecture with SQLAlchemy ORM, secure Werkzeug authentication, CSRF defense, and strict multi-user privacy isolation.
+* **Clinical Health & Contraindication Safety Engine (`ml/health_safety.py`):** Developed the rule-based medical screening engine detecting contraindicated movements across surgical histories, recovery stages, and chronic joint vulnerabilities.
+* **7-Day Split & Progressive Overload Systems:** Engineered the multi-day structured weekly program generator (`ml/program_generator.py`), smart dynamic warm-up/cool-down protocols, and data-driven progressive overload recommendations (`ml/progression_advisor.py`).
+* **Real-Time Interactive Workout Experience:** Built the interactive session player featuring synchronized Web Audio API chimes, direct YouTube reference integrations, and real-time exercise swappers.
+* **Social Accountability Network:** Created the "Circle of Consistency" friends ecosystem featuring unique `#FIT-XXXX` shareable codes, real-time streak leaderboards, and High-Five encouragement kudos.
+* **Editorial UI Overhaul & CSS Art System:** Crafted bespoke HTML/CSS vector icons eliminating system emojis, engineered sticky frosted-glass navigation with scroll elevation, and implemented a 30-test automated verification suite with 100% test pass rate.
 
 ---
 
