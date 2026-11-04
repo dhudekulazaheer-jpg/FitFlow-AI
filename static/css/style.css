@@ -1220,3 +1220,472 @@ input {
     left: 20px;
     z-index: 1001;
 }
+
+/* =========================================
+   USER HEADER & NAVBAR EXTENSIONS
+========================================= */
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.user-greeting {
+    font-size: 14px;
+    color: var(--forest);
+    font-weight: 500;
+}
+
+.user-greeting strong {
+    font-weight: 700;
+    color: var(--forest-light);
+}
+
+.nav-logout {
+    padding: 10px 18px !important;
+    font-size: 13px !important;
+    background: transparent !important;
+    border: 1px solid rgba(24, 61, 50, 0.25) !important;
+    color: var(--forest) !important;
+}
+
+.nav-logout:hover {
+    background: var(--sage) !important;
+    border-color: var(--forest) !important;
+}
+
+.sidebar-logout-btn {
+    margin-top: 15px;
+    border-top: 1px solid var(--border);
+    padding-top: 18px !important;
+    color: #b33939 !important;
+}
+
+.sidebar-logout-btn:hover {
+    background: #fdf0f0 !important;
+}
+
+/* =========================================
+   AUTHENTICATION PAGES (LOGIN & REGISTER)
+========================================= */
+
+body.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top right, var(--sage), var(--cream) 60%);
+    padding: 24px;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 480px;
+    margin: auto;
+}
+
+.auth-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 42px 36px;
+    box-shadow: var(--shadow);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.auth-header .logo {
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.auth-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    color: var(--forest);
+    margin-bottom: 8px;
+}
+
+.auth-header p {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.auth-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.auth-form .form-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--forest);
+    letter-spacing: 0.3px;
+}
+
+.auth-form .form-input {
+    width: 100%;
+    padding: 13px 16px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+    color: var(--text);
+    transition: all 0.25s ease;
+}
+
+.auth-form .form-input:focus {
+    outline: none;
+    background: var(--white);
+    border-color: var(--forest);
+    box-shadow: 0 0 0 3px rgba(40, 87, 71, 0.12);
+}
+
+.auth-button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 14px;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.auth-footer a {
+    color: var(--forest);
+    font-weight: 700;
+    transition: color 0.2s;
+}
+
+.auth-footer a:hover {
+    color: var(--forest-light);
+    text-decoration: underline;
+}
+
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+.flash-alert {
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.flash-error {
+    background: #fdf2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.flash-success {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.flash-info {
+    background: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+/* =========================================
+   HEALTH ASSESSMENT MODULE
+========================================= */
+
+.health-assessment-container {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.health-header {
+    user-select: none;
+}
+
+.health-title {
+    margin-bottom: 4px;
+}
+
+.health-toggle-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--forest);
+    background: var(--sage);
+    padding: 4px 10px;
+    border-radius: 20px;
+    transition: background 0.2s;
+}
+
+.health-toggle-badge:hover {
+    background: var(--sage-dark);
+}
+
+.health-hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.health-assessment-body {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.health-subgroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sub-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--forest);
+}
+
+.conditions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.condition-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+    padding: 8px 12px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.condition-option:hover {
+    border-color: var(--sage-dark);
+    background: #fafcf9;
+}
+
+.condition-checkbox {
+    accent-color: var(--forest);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.radio-choices {
+    display: flex;
+    gap: 20px;
+    margin-top: 4px;
+}
+
+.choice-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.choice-label input[type="radio"] {
+    accent-color: var(--forest);
+    width: 16px;
+    height: 16px;
+}
+
+.surgery-details-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form-subgroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.health-text-input,
+.health-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text);
+    transition: all 0.2s;
+}
+
+.health-text-input:focus,
+.health-textarea:focus {
+    outline: none;
+    border-color: var(--forest);
+    background: var(--white);
+}
+
+.health-subhint {
+    font-size: 12px;
+    color: #92400e;
+    background: #fffbeb;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-left: 3px solid #f59e0b;
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+.health-action-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 6px;
+}
+
+.save-health-btn {
+    padding: 10px 18px;
+    font-size: 13px;
+    background: var(--forest);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.save-health-btn:hover {
+    background: var(--forest-light);
+}
+
+.health-status-text {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.health-status-text.saving {
+    color: var(--muted);
+}
+
+.health-status-text.success {
+    color: #166534;
+}
+
+.health-status-text.error {
+    color: #991b1b;
+}
+
+/* =========================================
+   SAFETY WARNING & PAUSED STATES
+========================================= */
+
+.safety-warning-banner {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-left: 5px solid #f59e0b;
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 22px;
+}
+
+.safety-warning-banner h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 10px;
+}
+
+.safety-warning-list {
+    margin-left: 20px;
+    font-size: 13.5px;
+    color: #78350f;
+    line-height: 1.6;
+}
+
+.safety-warning-list li {
+    margin-bottom: 6px;
+}
+
+.safety-paused-card {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-left: 6px solid #e11d48;
+    border-radius: 18px;
+    padding: 28px 24px;
+    box-shadow: 0 10px 30px rgba(225, 29, 72, 0.08);
+}
+
+.safety-paused-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #9f1239;
+    margin-bottom: 12px;
+}
+
+.pause-message {
+    font-size: 14.5px;
+    color: #881337;
+    margin-bottom: 16px;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.pause-guidance {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    color: #4c0519;
+    line-height: 1.6;
+    border: 1px solid rgba(244, 63, 94, 0.2);
+}
+
+.safety-disclaimer-note {
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--cream);
+    padding: 12px 18px;
+    border-radius: 10px;
+    border-left: 3px solid var(--sage-dark);
+    margin-top: 24px;
+    line-height: 1.5;
+}

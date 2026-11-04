@@ -66,6 +66,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function apiRequest(url, options = {}) {
 
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
+        const method = (options.method || "GET").toUpperCase();
+
+        if (csrfToken && method !== "GET" && method !== "HEAD") {
+            options.headers = {
+                ...(options.headers || {}),
+                "X-CSRFToken": csrfToken
+            };
+        }
+
         const response = await fetch(url, options);
 
         let data;
@@ -77,9 +87,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (!response.ok || data.success === false) {
-            throw new Error(
+            const error = new Error(
                 data.error || data.message || "Something went wrong."
             );
+            error.safetyData = data;
+            error.status = response.status;
+            throw error;
         }
 
         return data;
@@ -286,6 +299,136 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================
+       HEALTH ASSESSMENT MODULE
+    ===================================== */
+
+    const healthHeaderToggle = document.getElementById("healthHeaderToggle");
+    const healthAssessmentBody = document.getElementById("healthAssessmentBody");
+    const healthToggleBadge = document.getElementById("healthToggleBadge");
+    const surgeryYes = document.getElementById("surgeryYes");
+    const surgeryNo = document.getElementById("surgeryNo");
+    const surgeryDetailsBox = document.getElementById("surgeryDetailsBox");
+    const saveAssessmentBtn = document.getElementById("saveAssessmentBtn");
+    const healthSaveStatus = document.getElementById("healthSaveStatus");
+
+    if (healthHeaderToggle && healthAssessmentBody) {
+        healthHeaderToggle.addEventListener("click", () => {
+            const isHidden = healthAssessmentBody.style.display === "none";
+            healthAssessmentBody.style.display = isHidden ? "block" : "none";
+            if (healthToggleBadge) {
+                healthToggleBadge.textContent = isHidden ? "Hide Assessment ▴" : "Show Assessment ▾";
+            }
+        });
+    }
+
+    if (surgeryYes && surgeryNo && surgeryDetailsBox) {
+        function toggleSurgeryDetails() {
+            surgeryDetailsBox.style.display = surgeryYes.checked ? "block" : "none";
+        }
+        surgeryYes.addEventListener("change", toggleSurgeryDetails);
+        surgeryNo.addEventListener("change", toggleSurgeryDetails);
+    }
+
+    function collectHealthAssessmentData() {
+        const checkedConditions = Array.from(
+            document.querySelectorAll('input[name="health_conditions"]:checked')
+        ).map(cb => cb.value);
+
+        const hasSurgery = document.getElementById("surgeryYes")?.checked === true;
+        const affectedPart = document.getElementById("affected_body_part")?.value?.trim() || "";
+        const surgeryDate = document.getElementById("surgery_date")?.value || "";
+        const medicallyCleared = document.getElementById("clearanceYes")?.checked === true;
+        const additionalInfo = document.getElementById("additional_information")?.value?.trim() || "";
+
+        return {
+            selected_conditions: checkedConditions,
+            previous_surgery: hasSurgery,
+            affected_body_part: affectedPart,
+            surgery_date: surgeryDate,
+            medically_cleared: medicallyCleared,
+            additional_information: additionalInfo
+        };
+    }
+
+    async function loadHealthAssessment() {
+        try {
+            const res = await apiRequest("/api/health-assessment");
+            if (res.success && res.assessment) {
+                const a = res.assessment;
+                const conditions = a.selected_conditions || [];
+                document.querySelectorAll('input[name="health_conditions"]').forEach(cb => {
+                    cb.checked = conditions.includes(cb.value);
+                });
+
+                if (a.previous_surgery) {
+                    if (surgeryYes) surgeryYes.checked = true;
+                    if (surgeryDetailsBox) surgeryDetailsBox.style.display = "block";
+                } else {
+                    if (surgeryNo) surgeryNo.checked = true;
+                    if (surgeryDetailsBox) surgeryDetailsBox.style.display = "none";
+                }
+
+                if (document.getElementById("affected_body_part")) {
+                    document.getElementById("affected_body_part").value = a.affected_body_part || "";
+                }
+                if (document.getElementById("surgery_date")) {
+                    document.getElementById("surgery_date").value = a.surgery_date || "";
+                }
+                if (a.medically_cleared) {
+                    if (document.getElementById("clearanceYes")) document.getElementById("clearanceYes").checked = true;
+                } else {
+                    if (document.getElementById("clearanceNo")) document.getElementById("clearanceNo").checked = true;
+                }
+                if (document.getElementById("additional_information")) {
+                    document.getElementById("additional_information").value = a.additional_information || "";
+                }
+
+                // If user already saved health assessment data, expand the section
+                if (conditions.length > 0 || a.previous_surgery) {
+                    if (healthAssessmentBody) healthAssessmentBody.style.display = "block";
+                    if (healthToggleBadge) healthToggleBadge.textContent = "Hide Assessment ▴";
+                }
+            }
+        } catch (e) {
+            console.warn("Could not pre-load health assessment:", e);
+        }
+    }
+
+    if (saveAssessmentBtn) {
+        saveAssessmentBtn.addEventListener("click", async () => {
+            const assessmentData = collectHealthAssessmentData();
+            saveAssessmentBtn.disabled = true;
+            if (healthSaveStatus) {
+                healthSaveStatus.textContent = "Saving assessment...";
+                healthSaveStatus.className = "health-status-text saving";
+            }
+
+            try {
+                const res = await apiRequest("/api/health-assessment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(assessmentData)
+                });
+                if (healthSaveStatus) {
+                    healthSaveStatus.textContent = "✓ Assessment saved successfully!";
+                    healthSaveStatus.className = "health-status-text success";
+                    setTimeout(() => { healthSaveStatus.textContent = ""; }, 4000);
+                }
+            } catch (err) {
+                if (healthSaveStatus) {
+                    healthSaveStatus.textContent = err.message || "Failed to save assessment.";
+                    healthSaveStatus.className = "health-status-text error";
+                }
+            } finally {
+                saveAssessmentBtn.disabled = false;
+            }
+        });
+    }
+
+    loadHealthAssessment();
+
+
+    /* =====================================
        PLAN FORM SUBMISSION
     ===================================== */
 
@@ -301,7 +444,8 @@ document.addEventListener("DOMContentLoaded", () => {
             fitness_level: formData.get("fitness_level"),
             duration: Number(formData.get("duration")),
             equipment: formData.get("equipment"),
-            body_part: formData.get("body_part") || null
+            body_part: formData.get("body_part") || null,
+            health_assessment: collectHealthAssessmentData()
         };
 
         generateBtn.disabled = true;
@@ -339,12 +483,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
             planSummary.replaceChildren();
 
-            const errorBox = document.createElement("div");
-            errorBox.className = "error-message";
-            errorBox.textContent =
-                error.message || "Unable to generate your plan.";
+            if (error.safetyData && (error.safetyData.health_safety_paused || error.safetyData.paused)) {
+                const pauseCard = document.createElement("div");
+                pauseCard.className = "safety-paused-card";
 
-            planContent.replaceChildren(errorBox);
+                const pauseHeading = document.createElement("h3");
+                pauseHeading.textContent = "⚠️ Exercise Safety Notice: Plan Generation Paused";
+
+                const pauseText = document.createElement("p");
+                pauseText.className = "pause-message";
+                pauseText.textContent = error.safetyData.error || error.message;
+
+                const guidanceBox = document.createElement("div");
+                guidanceBox.className = "pause-guidance";
+                guidanceBox.innerHTML = "<strong>Important Guidance:</strong> Because you reported a prior surgical procedure without confirmed medical clearance to exercise, FitFlow AI has paused routine generation. For your health and safety, please consult a qualified physician or healthcare professional to receive medical clearance before starting an exercise routine.";
+
+                pauseCard.append(pauseHeading, pauseText, guidanceBox);
+                planContent.replaceChildren(pauseCard);
+
+            } else {
+
+                const errorBox = document.createElement("div");
+                errorBox.className = "error-message";
+                errorBox.textContent =
+                    error.message || "Unable to generate your plan.";
+
+                planContent.replaceChildren(errorBox);
+
+            }
 
         } finally {
 
@@ -377,16 +543,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         planSummary.append(heading, details);
 
+        // Render Safety Warnings if any
+        if (result.safety_warnings && Array.isArray(result.safety_warnings) && result.safety_warnings.length > 0) {
+            const warningBox = document.createElement("div");
+            warningBox.className = "safety-warning-banner";
+
+            const warnHeading = document.createElement("h4");
+            warnHeading.innerHTML = "<span>⚠️</span> Health &amp; Movement Precautions";
+            warningBox.appendChild(warnHeading);
+
+            const warnList = document.createElement("ul");
+            warnList.className = "safety-warning-list";
+            result.safety_warnings.forEach(w => {
+                const li = document.createElement("li");
+                li.textContent = w;
+                warnList.appendChild(li);
+            });
+            warningBox.appendChild(warnList);
+            planContent.appendChild(warningBox);
+        }
+
         const components = [
-            { title: "Yoga Routine", key: "yoga" },
-            { title: "Workout Routine", key: "workout" }
+            { title: "Yoga Routine", key: "yoga", fallbackKey: "yoga_plan" },
+            { title: "Workout Routine", key: "workout", fallbackKey: "workout_plan" }
         ];
 
         let displayed = false;
 
         components.forEach(component => {
 
-            const plan = result[component.key];
+            const plan = result[component.key] || result[component.fallbackKey];
 
             if (plan && typeof plan === "object") {
 
@@ -399,6 +585,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!displayed) {
             renderSection("Your Fitness Routine", result);
+        }
+
+        // Render Medical Disclaimer if present
+        if (result.disclaimer) {
+            const disclaimerBox = document.createElement("div");
+            disclaimerBox.className = "safety-disclaimer-note";
+            disclaimerBox.textContent = `✦ Disclaimer: ${result.disclaimer}`;
+            planContent.appendChild(disclaimerBox);
         }
 
         resultsSection.hidden = false;
@@ -984,6 +1178,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("profileAge").value =
                 profile.age ?? "";
 
+            if (document.getElementById("profileGender")) {
+                document.getElementById("profileGender").value = profile.gender ?? "";
+            }
+
             document.getElementById("profileHeight").value =
                 profile.height ?? "";
 
@@ -1024,6 +1222,8 @@ document.addEventListener("DOMContentLoaded", () => {
             age: document.getElementById("profileAge").value
                 ? Number(document.getElementById("profileAge").value)
                 : null,
+
+            gender: document.getElementById("profileGender")?.value || null,
 
             height: document.getElementById("profileHeight").value
                 ? Number(document.getElementById("profileHeight").value)

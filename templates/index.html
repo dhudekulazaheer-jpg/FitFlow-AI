@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="FitFlow AI - Your personalized yoga and fitness planner">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>FitFlow AI | Your Wellness Journey</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,7 +44,14 @@
             <a href="#about">About</a>
         </nav>
 
-        <a href="#planner" class="nav-button">Get Started ↗</a>
+        <div class="nav-actions">
+            {% if current_user.is_authenticated %}
+                <span class="user-greeting">Hi, <strong>{{ current_user.name.split()[0] if current_user.name else 'Member' }}</strong></span>
+                <a href="{{ url_for('logout') }}" class="nav-button nav-logout">Logout ⎋</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="nav-button">Sign In ↗</a>
+            {% endif %}
+        </div>
 
     </header>
 
@@ -121,6 +129,13 @@
                 <span class="sidebar-icon">♙</span>
                 <span>Profile</span>
             </button>
+
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('logout') }}" class="sidebar-link sidebar-logout-btn">
+                <span class="sidebar-icon">⎋</span>
+                <span>Sign Out</span>
+            </a>
+            {% endif %}
 
         </nav>
 
@@ -424,7 +439,144 @@
                     </div>
 
 
-                    <button
+                    <!-- 07. HEALTH ASSESSMENT (OPTIONAL) -->
+                    <div class="form-group health-assessment-container">
+
+                        <div class="health-header" id="healthHeaderToggle">
+                            <label class="form-label health-title" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <span>07. Health &amp; Injury Assessment <span class="optional-label">(Optional)</span></span>
+                                <span class="health-toggle-badge" id="healthToggleBadge">Show Assessment ▾</span>
+                            </label>
+                        </div>
+                        <p class="health-hint">
+                            Disclose any conditions or prior surgeries so FitFlow AI can screen for conservative movement safety.
+                        </p>
+
+                        <div class="health-assessment-body" id="healthAssessmentBody" style="display: none;">
+
+                            <!-- CONDITIONS -->
+                            <div class="health-subgroup">
+                                <span class="sub-label">Select any conditions or discomfort you currently experience:</span>
+                                <div class="conditions-grid">
+
+                                    <label class="condition-option">
+                                        <input type="checkbox" name="health_conditions" value="knee_pain" class="condition-checkbox">
+                                        <span class="condition-tag">Knee pain or knee injury</span>
+                                    </label>
+
+                                    <label class="condition-option">
+                                        <input type="checkbox" name="health_conditions" value="lower_back_pain" class="condition-checkbox">
+                                        <span class="condition-tag">Lower back pain</span>
+                                    </label>
+
+                                    <label class="condition-option">
+                                        <input type="checkbox" name="health_conditions" value="neck_pain" class="condition-checkbox">
+                                        <span class="condition-tag">Neck or cervical pain</span>
+                                    </label>
+
+                                    <label class="condition-option">
+                                        <input type="checkbox" name="health_conditions" value="shoulder_pain" class="condition-checkbox">
+                                        <span class="condition-tag">Shoulder pain or injury</span>
+                                    </label>
+
+                                    <label class="condition-option">
+                                        <input type="checkbox" name="health_conditions" value="wrist_pain" class="condition-checkbox">
+                                        <span class="condition-tag">Wrist pain or injury</span>
+                                    </label>
+
+                                    <label class="condition-option">
+                                        <input type="checkbox" name="health_conditions" value="ankle_pain" class="condition-checkbox">
+                                        <span class="condition-tag">Ankle pain or injury</span>
+                                    </label>
+
+                                    <label class="condition-option">
+                                        <input type="checkbox" name="health_conditions" value="arthritis" class="condition-checkbox">
+                                        <span class="condition-tag">Arthritis</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <!-- SURGERY QUESTION -->
+                            <div class="health-subgroup surgery-group">
+                                <span class="sub-label">Have you undergone any previous surgery?</span>
+                                <div class="radio-choices">
+                                    <label class="choice-label">
+                                        <input type="radio" name="previous_surgery" value="no" id="surgeryNo" checked>
+                                        <span>No</span>
+                                    </label>
+                                    <label class="choice-label">
+                                        <input type="radio" name="previous_surgery" value="yes" id="surgeryYes">
+                                        <span>Yes</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- CONDITIONAL SURGERY DETAILS -->
+                            <div class="surgery-details-box" id="surgeryDetailsBox" style="display: none;">
+
+                                <div class="form-subgroup">
+                                    <label for="affected_body_part" class="sub-label">Affected body part</label>
+                                    <input
+                                        type="text"
+                                        id="affected_body_part"
+                                        name="affected_body_part"
+                                        class="health-text-input"
+                                        placeholder="e.g. Left Knee, Lower Spine, Shoulder"
+                                    >
+                                </div>
+
+                                <div class="form-subgroup">
+                                    <label for="surgery_date" class="sub-label">Surgery date</label>
+                                    <input
+                                        type="date"
+                                        id="surgery_date"
+                                        name="surgery_date"
+                                        class="health-text-input"
+                                    >
+                                </div>
+
+                                <div class="form-subgroup">
+                                    <span class="sub-label">Have you received medical clearance to exercise?</span>
+                                    <div class="radio-choices">
+                                        <label class="choice-label">
+                                            <input type="radio" name="medically_cleared" value="no" id="clearanceNo" checked>
+                                            <span>No</span>
+                                        </label>
+                                        <label class="choice-label">
+                                            <input type="radio" name="medically_cleared" value="yes" id="clearanceYes">
+                                            <span>Yes</span>
+                                        </label>
+                                    </div>
+                                    <p class="health-subhint">
+                                        Important: If you have had surgery and lack confirmed medical clearance, plan generation will pause for your protection.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <!-- ADDITIONAL INFORMATION -->
+                            <div class="health-subgroup">
+                                <label for="additional_information" class="sub-label">Additional Information / Physician Instructions</label>
+                                <textarea
+                                    id="additional_information"
+                                    name="additional_information"
+                                    rows="2"
+                                    class="health-textarea"
+                                    placeholder="Provide any additional mobility limitations or physical notes..."
+                                ></textarea>
+                            </div>
+
+                            <div class="health-action-row">
+                                <button type="button" id="saveAssessmentBtn" class="utility-button save-health-btn">
+                                    Save Health Assessment ✦
+                                </button>
+                                <span id="healthSaveStatus" class="health-status-text"></span>
+                            </div>
+
+                        </div>
+
+                    </div>
                         type="submit"
                         id="generateBtn"
                         class="generate-button"
@@ -668,6 +820,24 @@
                                 min="1"
                                 placeholder="Enter your age"
                             >
+
+                        </div>
+
+
+                        <div class="utility-form-group">
+
+                            <label for="profileGender">Gender</label>
+
+                            <select
+                                id="profileGender"
+                                name="gender"
+                            >
+                                <option value="">Select Gender (Optional)</option>
+                                <option value="female">Female</option>
+                                <option value="male">Male</option>
+                                <option value="non_binary">Non-binary</option>
+                                <option value="prefer_not_to_say">Prefer not to say</option>
+                            </select>
 
                         </div>
 
