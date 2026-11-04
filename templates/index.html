@@ -442,11 +442,11 @@
                     <!-- 07. HEALTH ASSESSMENT (OPTIONAL) -->
                     <div class="form-group health-assessment-container">
 
-                        <div class="health-header" id="healthHeaderToggle">
-                            <label class="form-label health-title" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                <span>07. Health &amp; Injury Assessment <span class="optional-label">(Optional)</span></span>
-                                <span class="health-toggle-badge" id="healthToggleBadge">Show Assessment ▾</span>
-                            </label>
+                        <div class="health-header" id="healthHeaderToggle" style="cursor: pointer;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <span class="form-label health-title" style="margin-bottom: 0;">07. Health &amp; Injury Assessment <span class="optional-label">(Optional)</span></span>
+                                <button type="button" class="health-toggle-badge" id="healthToggleBadge">Show Assessment ▾</button>
+                            </div>
                         </div>
                         <p class="health-hint">
                             Disclose any conditions or prior surgeries so FitFlow AI can screen for conservative movement safety.
@@ -577,6 +577,8 @@
                         </div>
 
                     </div>
+
+                    <button
                         type="submit"
                         id="generateBtn"
                         class="generate-button"

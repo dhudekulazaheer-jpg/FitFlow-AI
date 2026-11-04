@@ -1430,13 +1430,17 @@ body.auth-page {
 }
 
 .health-toggle-badge {
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
     font-size: 12px;
     font-weight: 600;
     color: var(--forest);
     background: var(--sage);
-    padding: 4px 10px;
+    padding: 6px 14px;
     border-radius: 20px;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
 
 .health-toggle-badge:hover {

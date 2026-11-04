@@ -312,13 +312,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const healthSaveStatus = document.getElementById("healthSaveStatus");
 
     if (healthHeaderToggle && healthAssessmentBody) {
-        healthHeaderToggle.addEventListener("click", () => {
+        function toggleAssessment(e) {
+            if (e) e.preventDefault();
             const isHidden = healthAssessmentBody.style.display === "none";
             healthAssessmentBody.style.display = isHidden ? "block" : "none";
             if (healthToggleBadge) {
                 healthToggleBadge.textContent = isHidden ? "Hide Assessment ▴" : "Show Assessment ▾";
             }
-        });
+        }
+        healthHeaderToggle.addEventListener("click", toggleAssessment);
+        if (healthToggleBadge) {
+            healthToggleBadge.addEventListener("click", (e) => {
+                e.stopPropagation();
+                toggleAssessment(e);
+            });
+        }
     }
 
     if (surgeryYes && surgeryNo && surgeryDetailsBox) {
