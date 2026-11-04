@@ -49,6 +49,13 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 csrf = CSRFProtect(app)
 
+# Ensure database tables exist on boot (supports gunicorn and local environments)
+with app.app_context():
+    try:
+        db.create_all()
+    except Exception as e:
+        app.logger.warning(f"Database table initialization notice: {e}")
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"

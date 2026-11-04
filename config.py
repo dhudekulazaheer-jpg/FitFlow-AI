@@ -8,7 +8,22 @@ BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "fitflow-ai-development-secret-key-change-in-production")
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:password@localhost/fitflow_ai")
+
+# Resilient Database Configuration (Cloud DATABASE_URL, local MySQL, or SQLite fallback)
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    db_user = os.getenv("DB_USER")
+    db_pass = os.getenv("DB_PASSWORD", "")
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_port = os.getenv("DB_PORT", "3306")
+    db_name = os.getenv("DB_NAME", "fitflow_ai")
+    if db_user:
+        DATABASE_URL = f"mysql+pymysql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+    else:
+        DATABASE_URL = f"sqlite:///{BASE_DIR / 'fitflow_ai.db'}"
+
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 DATASET_DIR = BASE_DIR / "datasets"
 YOGA_DIR = DATASET_DIR / "yoga"
