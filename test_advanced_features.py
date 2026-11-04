@@ -10,7 +10,7 @@ import sys
 import json
 import re
 from app import app
-from models import db, User, UserProfile, GeneratedPlan, PlanHistory
+from models import db, User, UserProfile, GeneratedPlan, PlanHistory, UserFriendship, FriendKudos
 from ml.warmup_cooldown import get_warmup_cooldown
 from ml.program_generator import WeeklyProgramGenerator
 from ml.progression_advisor import get_progression_advice
@@ -132,6 +132,13 @@ def run_tests():
             friend_profile = UserProfile(user_id=friend_user.id, fitness_level="intermediate", fitness_goal="endurance")
             db.session.add(friend_profile)
             db.session.commit()
+
+        # Ensure clean state for test run
+        UserFriendship.query.filter(
+            ((UserFriendship.user_id == user.id) & (UserFriendship.friend_id == friend_user.id)) |
+            ((UserFriendship.user_id == friend_user.id) & (UserFriendship.friend_id == user.id))
+        ).delete()
+        db.session.commit()
 
         assert user.friend_code == f"FIT-{user.id:04d}", f"Invalid friend code format: {user.friend_code}"
         assert friend_user.friend_code == f"FIT-{friend_user.id:04d}"

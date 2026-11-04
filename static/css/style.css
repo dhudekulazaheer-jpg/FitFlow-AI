@@ -61,9 +61,20 @@ input {
     justify-content: space-between;
     align-items: center;
     gap: 25px;
-    background: var(--cream);
-    position: relative;
-    z-index: 100;
+    background: rgba(247, 245, 239, 0.94);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(231, 234, 227, 0.85);
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(247, 245, 239, 0.98);
+    box-shadow: 0 4px 22px rgba(24, 61, 50, 0.08);
+    border-bottom-color: rgba(200, 208, 196, 0.9);
 }
 
 .logo {

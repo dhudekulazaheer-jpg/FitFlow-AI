@@ -2481,8 +2481,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================
-       INITIALIZATION
+       INITIALIZATION & SCROLL HANDLERS
     ===================================== */
+
+    const navbarEl = document.querySelector(".navbar");
+    function handleNavbarScroll() {
+        if (!navbarEl) return;
+        if (window.scrollY > 8) {
+            navbarEl.classList.add("scrolled");
+        } else {
+            navbarEl.classList.remove("scrolled");
+        }
+    }
+    window.addEventListener("scroll", handleNavbarScroll, { passive: true });
+    handleNavbarScroll();
 
     hideSidebar();
     loadAnalytics();
