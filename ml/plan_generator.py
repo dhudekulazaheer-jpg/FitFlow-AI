@@ -1,8 +1,8 @@
-
 import json
 
 from ml.yoga_generator import YogaGenerator
 from ml.workout_generator import WorkoutGenerator
+from ml.health_safety import evaluate_health_safety
 
 
 class PlanGenerator:
@@ -18,7 +18,10 @@ class PlanGenerator:
         fitness_level="beginner",
         duration=30,
         equipment="none",
-        body_part=None
+        body_part=None,
+        age=None,
+        health_assessment=None,
+        **kwargs
     ):
 
         plan_type = str(plan_type).lower().strip()
@@ -35,28 +38,54 @@ class PlanGenerator:
                 "message": "Choose a duration of 15, 30, 45 or 60 minutes."
             }
 
+        # -------------------------------------------------------------
+        # HEALTH & SAFETY EVALUATION
+        # -------------------------------------------------------------
+        safety_eval = evaluate_health_safety(health_assessment)
+        if safety_eval.get("paused") or not safety_eval.get("allowed", True):
+            return {
+                "success": False,
+                "paused": True,
+                "health_safety_paused": True,
+                "message": safety_eval.get("message") or "Plan generation paused for health safety reasons.",
+                "safety_warnings": safety_eval.get("warnings", []),
+                "disclaimer": safety_eval.get("disclaimer", "")
+            }
+
+        safety_warnings = safety_eval.get("warnings", [])
+        disclaimer = safety_eval.get("disclaimer", "")
+
         # YOGA-ONLY PLAN
         if plan_type == "yoga":
-
-            return self.yoga_generator.generate_plan(
+            res = self.yoga_generator.generate_plan(
                 goal=goal,
                 fitness_level=fitness_level,
                 duration=duration
             )
+            if isinstance(res, dict) and res.get("success", False):
+                res["safety_warnings"] = safety_warnings
+                res["disclaimer"] = disclaimer
+                if age is not None:
+                    res["user_age"] = age
+            return res
 
         # WORKOUT-ONLY PLAN
         if plan_type == "workout":
-
-            return self.workout_generator.generate_plan(
+            res = self.workout_generator.generate_plan(
                 goal=goal,
                 fitness_level=fitness_level,
                 duration=duration,
                 equipment=equipment,
                 body_part=body_part
             )
+            if isinstance(res, dict) and res.get("success", False):
+                res["safety_warnings"] = safety_warnings
+                res["disclaimer"] = disclaimer
+                if age is not None:
+                    res["user_age"] = age
+            return res
 
         # COMBINED YOGA + WORKOUT PLAN
-
         if duration == 15:
             return {
                 "success": False,
@@ -69,11 +98,9 @@ class PlanGenerator:
         if duration == 30:
             yoga_duration = 15
             workout_duration = 15
-
         elif duration == 45:
             yoga_duration = 15
             workout_duration = 30
-
         else:  # 60 minutes
             yoga_duration = 30
             workout_duration = 30
@@ -108,8 +135,8 @@ class PlanGenerator:
                 "details": workout_plan
             }
 
-        # Return combined result
-        return {
+        # Return combined result with both yoga/workout and yoga_plan/workout_plan for 100% compatibility
+        combined_result = {
             "success": True,
             "plan_type": "Combined",
             "goal": goal,
@@ -120,9 +147,17 @@ class PlanGenerator:
             ),
             "yoga_duration_minutes": yoga_duration,
             "workout_duration_minutes": workout_duration,
+            "yoga": yoga_plan,
             "yoga_plan": yoga_plan,
-            "workout_plan": workout_plan
+            "workout": workout_plan,
+            "workout_plan": workout_plan,
+            "safety_warnings": safety_warnings,
+            "disclaimer": disclaimer
         }
+        if age is not None:
+            combined_result["user_age"] = age
+
+        return combined_result
 
 
 if __name__ == "__main__":

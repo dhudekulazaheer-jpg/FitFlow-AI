@@ -1,0 +1,37 @@
+{
+  "surgery_rule": {
+    "pause_on_uncleared_surgery": true,
+    "clearance_required_message": "You indicated previous surgery without confirmed medical clearance to exercise. For your health and safety, plan generation has been paused. Please consult a qualified physician or healthcare specialist to receive exercise clearance before proceeding."
+  },
+  "condition_precautions": {
+    "knee_pain": {
+      "label": "Knee pain or knee injury",
+      "warning": "Knee precaution: Avoid high-impact jumping, heavy deep squats, or sharp knee torsion. Discontinue any movements that strain the knee joint."
+    },
+    "lower_back_pain": {
+      "label": "Lower back pain",
+      "warning": "Lower back precaution: Avoid heavy spinal loading, extreme back extensions, or uncontrolled rotational torque. Focus on neutral spine alignment."
+    },
+    "neck_pain": {
+      "label": "Neck or cervical pain",
+      "warning": "Neck / cervical precaution: Avoid poses or movements exerting direct pressure or hyperextension on the neck. Maintain neutral cervical posture."
+    },
+    "shoulder_pain": {
+      "label": "Shoulder pain or injury",
+      "warning": "Shoulder precaution: Avoid heavy overhead loads, behind-the-neck presses, or deep dips. Keep exercises strictly within a comfortable, pain-free range."
+    },
+    "wrist_pain": {
+      "label": "Wrist pain or injury",
+      "warning": "Wrist precaution: Limit direct full-weight bearing on extended wrists. Consider forearm or neutral wrist grip modifications."
+    },
+    "ankle_pain": {
+      "label": "Ankle pain or injury",
+      "warning": "Ankle precaution: Avoid plyometric jumping or abrupt lateral direction changes. Prioritize stable, low-impact movements."
+    },
+    "arthritis": {
+      "label": "Arthritis",
+      "warning": "Arthritis precaution: Focus on gentle, low-impact range of motion. Never push through joint inflammation or sharp articular pain."
+    }
+  },
+  "general_disclaimer": "FitFlow AI does not provide medical diagnoses or individual clinical advice. Always consult a qualified medical professional before undertaking new physical activities."
+}
