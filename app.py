@@ -34,6 +34,8 @@ from models import (
 from ml.plan_generator import PlanGenerator
 from ml.exercise_swapper import exercise_swapper
 from ml.wellness_companion import get_recovery_nutrition, get_user_analytics
+from ml.program_generator import WeeklyProgramGenerator
+from ml.progression_advisor import get_progression_advice
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -62,6 +64,7 @@ def load_user(user_id):
 
 # Initialize the plan generator
 plan_generator = PlanGenerator()
+weekly_program_generator = WeeklyProgramGenerator()
 
 # JSON storage directory (Preserved as backup/archive)
 DATA_DIR = Path(__file__).resolve().parent / "data"
@@ -792,6 +795,125 @@ def calculate_nutrition():
         "success": True,
         "nutrition": nutrition
     })
+
+
+# =========================================
+# 7-DAY STRUCTURED PROGRAM GENERATOR
+# =========================================
+
+@app.route("/api/generate-program", methods=["POST"])
+@login_required
+def generate_weekly_program():
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"success": False, "error": "Invalid program request data."}), 400
+
+    profile = current_user.profile
+    health_record = current_user.health_assessment
+
+    goal = data.get("goal") or (profile.fitness_goal if profile else "general_fitness")
+    fitness_level = data.get("fitness_level") or (profile.fitness_level if profile else "beginner")
+    equipment = data.get("equipment", "none")
+    duration = int(data.get("duration", 30))
+    user_weight = profile.weight if (profile and profile.weight) else 70.0
+    user_age = int(profile.age) if (profile and profile.age) else None
+
+    health_assessment_data = data.get("health_assessment")
+    if not health_assessment_data and health_record:
+        health_assessment_data = health_record.to_dict()
+
+    result = weekly_program_generator.generate_program(
+        goal=goal,
+        fitness_level=fitness_level,
+        equipment=equipment,
+        duration_per_session=duration,
+        health_assessment=health_assessment_data,
+        age=user_age,
+        weight_kg=user_weight
+    )
+
+    if not result.get("success", False):
+        status_code = 403 if result.get("paused") else 400
+        return jsonify(result), status_code
+
+    # Save weekly program in GeneratedPlan
+    try:
+        program_id = str(uuid.uuid4())
+        new_plan = GeneratedPlan(
+            id=program_id,
+            user_id=current_user.id,
+            plan_type="weekly_program",
+            goal=goal,
+            fitness_level=fitness_level,
+            duration=duration,
+            equipment=equipment,
+            plan_data=json.dumps(result),
+            generated_at=datetime.utcnow()
+        )
+        db.session.add(new_plan)
+        db.session.flush()
+
+        history_entry = PlanHistory(
+            user_id=current_user.id,
+            plan_id=program_id,
+            activity=f"Generated 7-Day Weekly Program ({goal})"
+        )
+        db.session.add(history_entry)
+        db.session.commit()
+
+        result["plan_id"] = program_id
+        return jsonify(result)
+    except Exception as e:
+        db.session.rollback()
+        app.logger.exception("Failed to save weekly program")
+        return jsonify(result)
+
+
+# =========================================
+# PROGRESSIVE OVERLOAD & DIFFICULTY ADVISOR
+# =========================================
+
+@app.route("/api/progression-advice", methods=["GET"])
+@login_required
+def get_user_progression_advice():
+    try:
+        advice = get_progression_advice(current_user.id)
+        return jsonify({"success": True, "advice": advice})
+    except Exception as e:
+        app.logger.exception("Failed to get progression advice")
+        return jsonify({"success": False, "error": "Could not determine progression advice."}), 500
+
+
+@app.route("/api/advance-level", methods=["POST"])
+@login_required
+def advance_user_level():
+    data = request.get_json(silent=True) or {}
+    new_level = data.get("level")
+    if new_level not in ["beginner", "intermediate", "advanced"]:
+        return jsonify({"success": False, "error": "Invalid fitness level."}), 400
+
+    profile = current_user.profile
+    if not profile:
+        profile = UserProfile(user_id=current_user.id, fitness_level=new_level)
+        db.session.add(profile)
+    else:
+        profile.fitness_level = new_level
+
+    try:
+        history_entry = PlanHistory(
+            user_id=current_user.id,
+            activity=f"Advanced fitness level to {new_level.capitalize()}"
+        )
+        db.session.add(history_entry)
+        db.session.commit()
+        return jsonify({
+            "success": True,
+            "message": f"Congratulations! Your profile has been advanced to {new_level.capitalize()}.",
+            "fitness_level": new_level
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "error": "Could not update fitness level."}), 500
 
 
 # =========================================

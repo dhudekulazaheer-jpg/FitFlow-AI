@@ -437,6 +437,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================
+       PROGRAM FORMAT SELECTOR (Daily vs Weekly)
+    ===================================== */
+
+    const formatDailyBtn = document.getElementById("formatDailyBtn");
+    const formatWeeklyBtn = document.getElementById("formatWeeklyBtn");
+
+    if (formatDailyBtn && formatWeeklyBtn) {
+        formatDailyBtn.addEventListener("click", () => {
+            formatDailyBtn.classList.add("active");
+            formatWeeklyBtn.classList.remove("active");
+            const inp = formatDailyBtn.querySelector("input");
+            if (inp) inp.checked = true;
+            if (generateBtn) generateBtn.textContent = "Generate My Fitness Plan ✦";
+        });
+
+        formatWeeklyBtn.addEventListener("click", () => {
+            formatWeeklyBtn.classList.add("active");
+            formatDailyBtn.classList.remove("active");
+            const inp = formatWeeklyBtn.querySelector("input");
+            if (inp) inp.checked = true;
+            if (generateBtn) generateBtn.textContent = "Generate My 7-Day Program ✦";
+        });
+    }
+
+
+    /* =====================================
        PLAN FORM SUBMISSION
     ===================================== */
 
@@ -445,6 +471,7 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
 
         const formData = new FormData(planForm);
+        const format = formData.get("program_format") || "daily";
 
         const userData = {
             plan_type: formData.get("plan_type"),
@@ -457,7 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         generateBtn.disabled = true;
-        generateBtn.textContent = "Generating Your Plan... ✦";
+        generateBtn.textContent = format === "weekly" ? "Generating 7-Day Program... ✦" : "Generating Your Plan... ✦";
 
         planContent.replaceChildren();
         planSummary.replaceChildren();
@@ -466,16 +493,20 @@ document.addEventListener("DOMContentLoaded", () => {
         resultsSection.hidden = false;
 
         planSummary.textContent =
-            "Preparing your personalized fitness routine...";
+            format === "weekly"
+                ? "Designing your 7-Day Structured Weekly Split..."
+                : "Preparing your personalized fitness routine...";
 
         resultsSection.scrollIntoView({
             behavior: "smooth",
             block: "start"
         });
 
+        const endpoint = format === "weekly" ? "/api/generate-program" : "/api/generate-plan";
+
         try {
 
-            const result = await apiRequest("/api/generate-plan", {
+            const result = await apiRequest(endpoint, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -483,7 +514,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(userData)
             });
 
-            renderPlan(result);
+            if (format === "weekly") {
+                renderWeeklyProgram(result);
+            } else {
+                renderPlan(result);
+            }
 
         } catch (error) {
 
@@ -523,7 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } finally {
 
             generateBtn.disabled = false;
-            generateBtn.textContent = "Generate My Fitness Plan ✦";
+            generateBtn.textContent = format === "weekly" ? "Generate My 7-Day Program ✦" : "Generate My Fitness Plan ✦";
 
         }
 
@@ -587,6 +622,11 @@ document.addEventListener("DOMContentLoaded", () => {
             planContent.appendChild(warningBox);
         }
 
+        // Render Smart Warm-Up Protocol (Feature 4)
+        if (result.warmup) {
+            renderWarmupProtocol(result.warmup);
+        }
+
         const components = [
             { title: "Yoga Routine", key: "yoga", fallbackKey: "yoga_plan" },
             { title: "Workout Routine", key: "workout", fallbackKey: "workout_plan" }
@@ -611,6 +651,11 @@ document.addEventListener("DOMContentLoaded", () => {
             renderSection("Your Fitness Routine", result);
         }
 
+        // Render Smart Cool-Down Protocol (Feature 4)
+        if (result.cooldown) {
+            renderCooldownProtocol(result.cooldown);
+        }
+
         // Render Post-Workout Recovery Nutrition Guide (Feature 6)
         if (result.recovery_nutrition) {
             renderRecoveryNutrition(result.recovery_nutrition);
@@ -626,6 +671,204 @@ document.addEventListener("DOMContentLoaded", () => {
 
         resultsSection.hidden = false;
 
+    }
+
+
+    /* =====================================
+       WARM-UP & COOL-DOWN PROTOCOL RENDERERS
+    ===================================== */
+
+    function renderWarmupProtocol(warmup) {
+        if (!warmup || !Array.isArray(warmup) || warmup.length === 0) return;
+        const card = document.createElement("div");
+        card.className = "protocol-card";
+        card.innerHTML = `
+            <span class="protocol-kicker">✦ Phase 01: Pre-Routine Preparation</span>
+            <h4 class="protocol-title">Dynamic Warm-Up Protocol (3 Min)</h4>
+            <div class="protocol-list">
+                ${warmup.map(w => `
+                    <div class="protocol-row">
+                        <span class="protocol-bullet">✦</span>
+                        <div class="protocol-body">
+                            <strong class="protocol-name">${escapeHtml(w.name)}</strong>
+                            <span class="protocol-target-badge">${escapeHtml(w.target || "Mobility")} • ${w.duration_seconds}s</span>
+                            <span class="protocol-desc">${escapeHtml(w.instructions)}</span>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+        planContent.appendChild(card);
+    }
+
+    function renderCooldownProtocol(cooldown) {
+        if (!cooldown || !Array.isArray(cooldown) || cooldown.length === 0) return;
+        const card = document.createElement("div");
+        card.className = "protocol-card";
+        card.innerHTML = `
+            <span class="protocol-kicker">✦ Phase 03: Post-Routine Restoration</span>
+            <h4 class="protocol-title">Restorative Cool-Down Protocol (3 Min)</h4>
+            <div class="protocol-list">
+                ${cooldown.map(c => `
+                    <div class="protocol-row">
+                        <span class="protocol-bullet">✦</span>
+                        <div class="protocol-body">
+                            <strong class="protocol-name">${escapeHtml(c.name)}</strong>
+                            <span class="protocol-target-badge">${escapeHtml(c.target || "Recovery")} • ${c.duration_seconds}s</span>
+                            <span class="protocol-desc">${escapeHtml(c.instructions)}</span>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        `;
+        planContent.appendChild(card);
+    }
+
+
+    /* =====================================
+       FEATURE 1: 7-DAY WEEKLY PROGRAM RENDERER
+    ===================================== */
+
+    function renderWeeklyProgram(program) {
+        planSummary.replaceChildren();
+        planContent.replaceChildren();
+
+        const heading = document.createElement("h3");
+        heading.textContent = "Your 7-Day Structured Weekly Program is Ready!";
+
+        const details = document.createElement("p");
+        details.textContent =
+            `Goal: ${formatText(program.goal || "—")} | ` +
+            `Level: ${formatText(program.fitness_level || "—")} | ` +
+            `Schedule: 7 Days Progressive Split`;
+
+        planSummary.append(heading, details);
+
+        if (program.safety_warnings && Array.isArray(program.safety_warnings) && program.safety_warnings.length > 0) {
+            const warningBox = document.createElement("div");
+            warningBox.className = "safety-warning-banner";
+            warningBox.innerHTML = `<h4><span>⚠️</span> Health &amp; Movement Precautions</h4><ul class="safety-warning-list">${program.safety_warnings.map(w => `<li>${escapeHtml(w)}</li>`).join("")}</ul>`;
+            planContent.appendChild(warningBox);
+        }
+
+        const card = document.createElement("div");
+        card.className = "weekly-schedule-card";
+
+        const header = document.createElement("div");
+        header.className = "weekly-schedule-header";
+        header.innerHTML = `
+            <span class="protocol-kicker">✦ Periodized Progression Split</span>
+            <h3 class="recovery-editorial-title">7-Day Weekly Training &amp; Mobility Split</h3>
+            <p class="recovery-editorial-subtitle">Select each day below to view that day's complete tailored routine, warm-up, and recovery guidance.</p>
+        `;
+        card.appendChild(header);
+
+        const tabsRow = document.createElement("div");
+        tabsRow.className = "weekly-schedule-tabs";
+
+        const dayViewContainer = document.createElement("div");
+        dayViewContainer.className = "weekly-active-day-view";
+
+        const schedule = program.schedule || [];
+
+        function renderDayView(dayObj) {
+            dayViewContainer.replaceChildren();
+
+            const dayHeading = document.createElement("div");
+            dayHeading.className = "weekly-day-heading";
+            dayHeading.innerHTML = `
+                <div style="margin-bottom: 16px;">
+                    <span class="protocol-kicker">✦ ${dayObj.day_name} • Day ${dayObj.day}</span>
+                    <h3 style="font-family: 'Playfair Display', Georgia, serif; font-size: 22px; color: var(--forest); margin: 0 0 6px 0;">${escapeHtml(dayObj.focus_title)}</h3>
+                </div>
+            `;
+            dayViewContainer.appendChild(dayHeading);
+
+            if (dayObj.is_rest_day) {
+                const restCard = document.createElement("div");
+                restCard.className = "rest-day-card";
+                restCard.innerHTML = `
+                    <div class="rest-day-icon">🌿</div>
+                    <h4>Rest &amp; Deep Tissue Recovery</h4>
+                    <p>${escapeHtml(dayObj.routine_summary)}</p>
+                    <span class="rest-day-cue">✦ Guidance: ${escapeHtml(dayObj.recovery_guidance)}</span>
+                `;
+                dayViewContainer.appendChild(restCard);
+            } else {
+                const dayExercises = extractSessionExercises(dayObj.routine || dayObj);
+                if (dayExercises.length > 0) {
+                    const startBtn = document.createElement("button");
+                    startBtn.type = "button";
+                    startBtn.className = "start-session-btn";
+                    startBtn.style.marginBottom = "22px";
+                    startBtn.innerHTML = `<span>▶</span> Start ${dayObj.day_name} Interactive Session (${dayObj.duration_minutes || 30}m)`;
+                    startBtn.addEventListener("click", () => {
+                        launchInteractiveSession(dayExercises, {
+                            plan_type: `${dayObj.day_name} - ${dayObj.focus_title}`,
+                            requested_duration_minutes: dayObj.duration_minutes || 30,
+                            goal: program.goal
+                        });
+                    });
+                    dayViewContainer.appendChild(startBtn);
+                }
+
+                if (dayObj.warmup) renderWarmupProtocol(dayObj.warmup);
+
+                const r = dayObj.routine || {};
+                const comp = [
+                    { title: "Yoga Routine", key: "yoga", fallback: "yoga_plan" },
+                    { title: "Workout Routine", key: "workout", fallback: "workout_plan" }
+                ];
+                comp.forEach(c => {
+                    const pl = r[c.key] || r[c.fallback];
+                    if (pl && typeof pl === "object") {
+                        const sec = document.createElement("div");
+                        sec.className = "plan-card";
+                        const h = document.createElement("h3");
+                        h.textContent = c.title;
+                        sec.appendChild(h);
+                        renderValue(pl, sec, { isYoga: c.title.toLowerCase().includes("yoga") });
+                        dayViewContainer.appendChild(sec);
+                    }
+                });
+
+                if (dayObj.cooldown) renderCooldownProtocol(dayObj.cooldown);
+                if (dayObj.recovery_nutrition) renderRecoveryNutrition(dayObj.recovery_nutrition);
+            }
+        }
+
+        schedule.forEach((dayObj, index) => {
+            const tab = document.createElement("button");
+            tab.type = "button";
+            tab.className = `weekly-day-tab ${index === 0 ? "active" : ""} ${dayObj.is_rest_day ? "rest-tab" : ""}`;
+            tab.innerHTML = `
+                <span class="tab-day-name">${dayObj.day_name.slice(0, 3)}</span>
+                <span class="tab-day-type">${dayObj.is_rest_day ? "Rest" : (dayObj.plan_type || "Active")}</span>
+            `;
+            tab.addEventListener("click", () => {
+                tabsRow.querySelectorAll(".weekly-day-tab").forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                renderDayView(dayObj);
+            });
+            tabsRow.appendChild(tab);
+        });
+
+        card.appendChild(tabsRow);
+        card.appendChild(dayViewContainer);
+        planContent.appendChild(card);
+
+        if (schedule.length > 0) {
+            renderDayView(schedule[0]);
+        }
+
+        if (program.disclaimer) {
+            const disclaimerBox = document.createElement("div");
+            disclaimerBox.className = "safety-disclaimer-note";
+            disclaimerBox.textContent = `✦ Disclaimer: ${program.disclaimer}`;
+            planContent.appendChild(disclaimerBox);
+        }
+
+        resultsSection.hidden = false;
     }
 
 
@@ -756,6 +999,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function extractSessionExercises(planObj) {
         const exercises = [];
+
+        // Prepend Warm-Up if present (Feature 4)
+        if (planObj && planObj.warmup && Array.isArray(planObj.warmup)) {
+            planObj.warmup.forEach(w => {
+                exercises.push({
+                    name: w.name,
+                    sub: w.target || "Dynamic Warm-Up",
+                    category: "Dynamic Warm-Up",
+                    instructions: w.instructions || "Perform smoothly to prime muscles and joints.",
+                    isYoga: false,
+                    duration: w.duration_seconds || 60
+                });
+            });
+        }
+
         function recurse(obj, isYoga) {
             if (!obj) return;
             if (Array.isArray(obj)) {
@@ -772,6 +1030,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 } else {
                     Object.entries(obj).forEach(([k, v]) => {
+                        if (k === "warmup" || k === "cooldown" || k === "recovery_nutrition") return;
                         const yogaFlag = isYoga || k.toLowerCase().includes("yoga");
                         recurse(v, yogaFlag);
                     });
@@ -779,7 +1038,107 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
         recurse(planObj, false);
+
+        // Append Cool-Down if present (Feature 4)
+        if (planObj && planObj.cooldown && Array.isArray(planObj.cooldown)) {
+            planObj.cooldown.forEach(c => {
+                exercises.push({
+                    name: c.name,
+                    sub: c.target || "Cool-Down Stretch",
+                    category: "Cool-Down Stretch",
+                    instructions: c.instructions || "Breathe deeply and gently release muscular tension.",
+                    isYoga: true,
+                    duration: c.duration_seconds || 60
+                });
+            });
+        }
+
         return exercises;
+    }
+
+    /* Web Audio API Sound Synthesizer (Feature 3: Audio Chimes & Interval Beeps) */
+    let audioCtx = null;
+
+    function getAudioContext() {
+        if (!audioCtx) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+                audioCtx = new AudioContextClass();
+            }
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+            audioCtx.resume();
+        }
+        return audioCtx;
+    }
+
+    function playBeep(frequency = 580, duration = 0.1, type = "sine") {
+        const voiceToggle = document.getElementById("sessionVoiceToggle");
+        if (voiceToggle && !voiceToggle.checked) return;
+        try {
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+            gain.gain.setValueAtTime(0.18, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + duration);
+        } catch (e) {
+            console.warn("Audio playBeep error:", e);
+        }
+    }
+
+    function playTibetanBowlChime() {
+        const voiceToggle = document.getElementById("sessionVoiceToggle");
+        if (voiceToggle && !voiceToggle.checked) return;
+        try {
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            const now = ctx.currentTime;
+            [261.63, 523.25, 784.88].forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(freq, now);
+                const vol = 0.14 / (idx + 1);
+                gain.gain.setValueAtTime(vol, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.4);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 2.5);
+            });
+        } catch (e) {
+            console.warn("Tibetan bowl error:", e);
+        }
+    }
+
+    function playTransitionChime() {
+        const voiceToggle = document.getElementById("sessionVoiceToggle");
+        if (voiceToggle && !voiceToggle.checked) return;
+        try {
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(587.33, now);
+            osc.frequency.exponentialRampToValueAtTime(880.00, now + 0.15);
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.5);
+        } catch (e) {
+            console.warn("Transition chime error:", e);
+        }
     }
 
     function speakText(text) {
@@ -858,12 +1217,26 @@ document.addEventListener("DOMContentLoaded", () => {
             sessionSecondsLeft--;
             updateTimerDisplay();
 
-            if (sessionSecondsLeft === 3) speakText("Three");
-            if (sessionSecondsLeft === 2) speakText("Two");
-            if (sessionSecondsLeft === 1) speakText("One");
+            if (sessionSecondsLeft === 3) {
+                playBeep(440, 0.08);
+                speakText("Three");
+            }
+            if (sessionSecondsLeft === 2) {
+                playBeep(440, 0.08);
+                speakText("Two");
+            }
+            if (sessionSecondsLeft === 1) {
+                playBeep(440, 0.08);
+                speakText("One");
+            }
 
             if (sessionSecondsLeft <= 0) {
                 clearInterval(sessionTimerInterval);
+                if (step.isYoga || (step.category && step.category.toLowerCase().includes("yoga"))) {
+                    playTibetanBowlChime();
+                } else {
+                    playTransitionChime();
+                }
                 sessionStepIndex++;
                 renderCurrentSessionStep();
             }
@@ -997,6 +1370,59 @@ document.addEventListener("DOMContentLoaded", () => {
                         `;
                         badgesGrid.appendChild(badgeEl);
                     });
+                }
+
+                // Load Progressive Overload & Difficulty Advice (Feature 5)
+                try {
+                    const advRes = await apiRequest("/api/progression-advice");
+                    if (advRes.success && advRes.advice) {
+                        const adv = advRes.advice;
+                        const advisorTitle = document.getElementById("advisorTitle");
+                        const advisorMessage = document.getElementById("advisorMessage");
+                        const advisorCuesList = document.getElementById("advisorCuesList");
+                        const advisorActionRow = document.getElementById("advisorActionRow");
+                        const advanceLevelBtn = document.getElementById("advanceLevelBtn");
+
+                        if (advisorTitle) advisorTitle.textContent = adv.title;
+                        if (advisorMessage) advisorMessage.textContent = adv.message;
+                        if (advisorCuesList && Array.isArray(adv.actionable_cues)) {
+                            advisorCuesList.replaceChildren();
+                            adv.actionable_cues.forEach(cue => {
+                                const row = document.createElement("div");
+                                row.className = "advisor-cue-row";
+                                row.innerHTML = `<span class="advisor-cue-bullet">✦</span><span>${escapeHtml(cue)}</span>`;
+                                advisorCuesList.appendChild(row);
+                            });
+                        }
+
+                        if (advisorActionRow && advanceLevelBtn) {
+                            if (adv.ready_to_advance && adv.recommended_level) {
+                                advanceLevelBtn.textContent = `Advance to ${formatText(adv.recommended_level)} Level ↗`;
+                                advisorActionRow.hidden = false;
+                                advanceLevelBtn.onclick = async () => {
+                                    advanceLevelBtn.disabled = true;
+                                    advanceLevelBtn.textContent = "Advancing Level...";
+                                    try {
+                                        const up = await apiRequest("/api/advance-level", {
+                                            method: "POST",
+                                            headers: { "Content-Type": "application/json" },
+                                            body: JSON.stringify({ level: adv.recommended_level })
+                                        });
+                                        alert(up.message || "Profile updated to new level!");
+                                        loadAnalytics();
+                                    } catch (err) {
+                                        alert(err.message || "Could not update level.");
+                                    } finally {
+                                        advanceLevelBtn.disabled = false;
+                                    }
+                                };
+                            } else {
+                                advisorActionRow.hidden = true;
+                            }
+                        }
+                    }
+                } catch (advErr) {
+                    console.warn("Could not load progression advice:", advErr);
                 }
             }
         } catch (e) {

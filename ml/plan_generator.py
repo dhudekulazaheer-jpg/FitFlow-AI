@@ -3,6 +3,7 @@ import json
 from ml.yoga_generator import YogaGenerator
 from ml.workout_generator import WorkoutGenerator
 from ml.health_safety import evaluate_health_safety
+from ml.warmup_cooldown import get_warmup_cooldown
 
 
 class PlanGenerator:
@@ -65,6 +66,9 @@ class PlanGenerator:
             if isinstance(res, dict) and res.get("success", False):
                 res["safety_warnings"] = safety_warnings
                 res["disclaimer"] = disclaimer
+                wc = get_warmup_cooldown(body_part=None, is_yoga=True, goal=goal)
+                res["warmup"] = wc["warmup"]
+                res["cooldown"] = wc["cooldown"]
                 if age is not None:
                     res["user_age"] = age
             return res
@@ -81,6 +85,9 @@ class PlanGenerator:
             if isinstance(res, dict) and res.get("success", False):
                 res["safety_warnings"] = safety_warnings
                 res["disclaimer"] = disclaimer
+                wc = get_warmup_cooldown(body_part=body_part, is_yoga=False, goal=goal)
+                res["warmup"] = wc["warmup"]
+                res["cooldown"] = wc["cooldown"]
                 if age is not None:
                     res["user_age"] = age
             return res
@@ -156,6 +163,10 @@ class PlanGenerator:
         }
         if age is not None:
             combined_result["user_age"] = age
+
+        wc = get_warmup_cooldown(body_part=body_part, is_yoga=False, goal=goal)
+        combined_result["warmup"] = wc["warmup"]
+        combined_result["cooldown"] = wc["cooldown"]
 
         return combined_result
 

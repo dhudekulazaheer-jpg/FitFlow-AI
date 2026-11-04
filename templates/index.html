@@ -253,6 +253,22 @@
 
                 <form id="planForm">
 
+                    <!-- PROGRAM FORMAT SELECTOR -->
+                    <div class="program-format-selector">
+                        <label class="format-toggle-btn active" id="formatDailyBtn">
+                            <input type="radio" name="program_format" value="daily" checked hidden>
+                            <span class="format-icon">⚡</span>
+                            <span class="format-title">Daily Routine</span>
+                            <span class="format-desc">Single session</span>
+                        </label>
+                        <label class="format-toggle-btn" id="formatWeeklyBtn">
+                            <input type="radio" name="program_format" value="weekly" hidden>
+                            <span class="format-icon">📅</span>
+                            <span class="format-title">7-Day Program</span>
+                            <span class="format-desc">Complete weekly split</span>
+                        </label>
+                    </div>
+
                     <!-- PLAN TYPE -->
                     <div class="form-group">
 
@@ -730,6 +746,17 @@
                     <div class="badges-section">
                         <h4 class="badges-title">Achievement Badges</h4>
                         <div class="badges-grid" id="badgesGrid"></div>
+                    </div>
+
+                    <!-- Progressive Overload Advisor -->
+                    <div class="advisor-section" id="advisorSection">
+                        <div class="advisor-kicker">✦ PROGRESSIVE OVERLOAD &amp; DIFFICULTY ADVISOR</div>
+                        <h4 class="advisor-title" id="advisorTitle">Foundation Phase</h4>
+                        <p class="advisor-sub" id="advisorMessage">Analyzing session frequency...</p>
+                        <div class="advisor-cues-list" id="advisorCuesList"></div>
+                        <div class="advisor-action-row" id="advisorActionRow" hidden>
+                            <button type="button" class="advisor-advance-btn" id="advanceLevelBtn">Advance to Next Fitness Level ↗</button>
+                        </div>
                     </div>
                 </div>
 
