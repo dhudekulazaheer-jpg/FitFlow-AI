@@ -649,8 +649,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================
-       FEATURE 6: RECOVERY NUTRITION RENDERER
+       FEATURE 6: RECOVERY NUTRITION RENDERER (Clean Editorial Layout)
     ===================================== */
+
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
     function renderRecoveryNutrition(nutrition) {
         if (!nutrition) return;
@@ -658,61 +668,73 @@ document.addEventListener("DOMContentLoaded", () => {
         const card = document.createElement("div");
         card.className = "recovery-nutrition-card";
 
-        const title = document.createElement("h4");
-        title.innerHTML = "<span>🥗</span> Post-Workout Recovery &amp; Nutrition Guide";
-        card.appendChild(title);
+        // Editorial Header - No generic colored boxes
+        const header = document.createElement("div");
+        header.className = "recovery-editorial-header";
+        header.innerHTML = `
+            <span class="recovery-kicker">✦ Post-Workout Recovery Protocol</span>
+            <h3 class="recovery-editorial-title">Nutrition &amp; Cellular Recovery</h3>
+            <p class="recovery-editorial-subtitle">Optimal recovery window: Consume whole nourishment within 30–60 minutes to replenish depleted glycogen and accelerate cellular repair.</p>
+        `;
+        card.appendChild(header);
 
-        const grid = document.createElement("div");
-        grid.className = "recovery-targets-grid";
-
-        grid.innerHTML = `
-            <div class="recovery-target-item">
-                <span class="target-icon">💧</span>
-                <div class="target-info">
-                    <strong>${nutrition.target_water_ml} ml</strong>
-                    <small>Hydration Target</small>
-                </div>
+        // Typographic Metric Strip with Hairline Dividers (Zero chunky beige boxes)
+        const strip = document.createElement("div");
+        strip.className = "recovery-metrics-strip";
+        strip.innerHTML = `
+            <div class="recovery-stat-col">
+                <div class="recovery-stat-number">${escapeHtml(nutrition.target_water_ml)}<span class="recovery-stat-unit">ml</span></div>
+                <div class="recovery-stat-label">Hydration Target</div>
             </div>
-            <div class="recovery-target-item">
-                <span class="target-icon">🥩</span>
-                <div class="target-info">
-                    <strong>${nutrition.target_protein_g} g</strong>
-                    <small>Protein Target</small>
-                </div>
+            <div class="recovery-stat-col recovery-stat-divider">
+                <div class="recovery-stat-number">${escapeHtml(nutrition.target_protein_g)}<span class="recovery-stat-unit">g</span></div>
+                <div class="recovery-stat-label">Recovery Protein</div>
             </div>
-            <div class="recovery-target-item">
-                <span class="target-icon">🌾</span>
-                <div class="target-info">
-                    <strong>Carb Replenishment</strong>
-                    <small>${nutrition.carb_ratio}</small>
-                </div>
+            <div class="recovery-stat-col">
+                <div class="recovery-stat-number recovery-stat-text">${escapeHtml(nutrition.carb_ratio || "Balanced 2:1")}</div>
+                <div class="recovery-stat-label">Replenishment Profile</div>
             </div>
         `;
-        card.appendChild(grid);
+        card.appendChild(strip);
 
+        // Curated Whole-Food Replenishment (Menu / Editorial List format instead of stacked beige pills)
         if (nutrition.recommended_snacks && nutrition.recommended_snacks.length > 0) {
-            const snacksBox = document.createElement("div");
-            snacksBox.className = "recovery-snacks-box";
-            const snacksTitle = document.createElement("h5");
-            snacksTitle.textContent = "Recommended Whole-Food Snacks:";
-            snacksBox.appendChild(snacksTitle);
+            const snacksSec = document.createElement("div");
+            snacksSec.className = "recovery-culinary-section";
+
+            const snacksTitle = document.createElement("h4");
+            snacksTitle.className = "recovery-culinary-title";
+            snacksTitle.textContent = "Curated Whole-Food Replenishment";
+            snacksSec.appendChild(snacksTitle);
 
             const snacksList = document.createElement("div");
-            snacksList.className = "recovery-snacks-list";
+            snacksList.className = "recovery-culinary-list";
+
             nutrition.recommended_snacks.forEach(s => {
-                const sItem = document.createElement("div");
-                sItem.className = "snack-item";
-                sItem.innerHTML = `<strong>${s.title}</strong> — <span>${s.detail}</span>`;
-                snacksList.appendChild(sItem);
+                const row = document.createElement("div");
+                row.className = "recovery-culinary-row";
+                row.innerHTML = `
+                    <div class="culinary-bullet">✦</div>
+                    <div class="culinary-content">
+                        <strong class="culinary-name">${escapeHtml(s.title)}</strong>
+                        <span class="culinary-desc">${escapeHtml(s.detail)}</span>
+                    </div>
+                `;
+                snacksList.appendChild(row);
             });
-            snacksBox.appendChild(snacksList);
-            card.appendChild(snacksBox);
+
+            snacksSec.appendChild(snacksList);
+            card.appendChild(snacksSec);
         }
 
+        // Editorial Footnote Note (Subtle, elegant italics instead of generic amber alert box)
         if (nutrition.electrolyte_tip) {
-            const tip = document.createElement("p");
-            tip.className = "recovery-electrolyte-tip";
-            tip.innerHTML = `<strong>✦ Hydration Tip:</strong> ${nutrition.electrolyte_tip}`;
+            const tip = document.createElement("div");
+            tip.className = "recovery-editorial-footnote";
+            tip.innerHTML = `
+                <span class="footnote-mark">✦</span>
+                <p><strong>Hydration Guidance:</strong> ${escapeHtml(nutrition.electrolyte_tip)}</p>
+            `;
             card.appendChild(tip);
         }
 
