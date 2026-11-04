@@ -3193,3 +3193,288 @@ body.auth-page {
         grid-template-columns: repeat(4, 1fr);
     }
 }
+
+
+/* =========================================
+   BESPOKE HTML/CSS GENERATED ART ICONS
+========================================= */
+
+.css-art-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    margin-bottom: 8px;
+}
+
+/* 1. Daily Routine Icon */
+.css-art-icon.icon-daily {
+    width: 32px;
+    height: 32px;
+}
+
+.icon-daily .sun-ring {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px dashed #F59E0B;
+    animation: rotateSlow 14s linear infinite;
+    opacity: 0.8;
+}
+
+.icon-daily .sun-core {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+    animation: pulseSoft 2s ease-in-out infinite alternate;
+}
+
+.icon-daily .bolt-top {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 7px solid #FFFFFF;
+    transform: rotate(15deg) translate(-1px, -2px);
+}
+
+.icon-daily .bolt-bottom {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 7px solid #FFFFFF;
+    transform: rotate(15deg) translate(1px, 2px);
+}
+
+/* 2. 7-Day Program Icon */
+.css-art-icon.icon-weekly {
+    width: 34px;
+    height: 34px;
+}
+
+.icon-weekly .cal-top-bar {
+    position: absolute;
+    top: 3px;
+    width: 26px;
+    height: 7px;
+    background: #183D32;
+    border-radius: 3px 3px 0 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 4px;
+    box-sizing: border-box;
+    z-index: 2;
+}
+
+.icon-weekly .cal-pin {
+    width: 3px;
+    height: 5px;
+    background: #F59E0B;
+    border-radius: 2px;
+    transform: translateY(-2px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.icon-weekly .cal-sheet {
+    position: absolute;
+    top: 9px;
+    width: 26px;
+    height: 20px;
+    background: #FFFFFF;
+    border: 1px solid #D8D2C5;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    padding: 3px 2px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(24, 61, 50, 0.08);
+}
+
+.icon-weekly .cal-grid-pips {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px 3px;
+    margin-top: 1px;
+}
+
+.icon-weekly .cal-grid-pips span {
+    width: 4px;
+    height: 4px;
+    background: #A8BBA2;
+    border-radius: 1px;
+}
+
+.icon-weekly .cal-grid-pips span.cal-pip-gold {
+    background: #D97706;
+    box-shadow: 0 0 3px #F59E0B;
+}
+
+/* 3. Yoga Lotus Icon */
+.css-art-icon.icon-yoga {
+    width: 38px;
+    height: 36px;
+}
+
+.icon-yoga .lotus-halo {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168, 187, 162, 0.45) 0%, transparent 70%);
+}
+
+.icon-yoga .lotus-center {
+    position: absolute;
+    bottom: 6px;
+    width: 9px;
+    height: 17px;
+    background: linear-gradient(180deg, #6B8F71 0%, #183D32 100%);
+    border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%;
+    z-index: 2;
+    box-shadow: 0 0 5px rgba(40, 87, 71, 0.35);
+}
+
+.icon-yoga .lotus-leaf-left {
+    position: absolute;
+    bottom: 5px;
+    left: 8px;
+    width: 8px;
+    height: 13px;
+    background: linear-gradient(135deg, #A8BBA2 0%, #285747 100%);
+    border-radius: 70% 30% 50% 10% / 60% 30% 50% 20%;
+    transform: rotate(-32deg);
+    transform-origin: bottom right;
+}
+
+.icon-yoga .lotus-leaf-right {
+    position: absolute;
+    bottom: 5px;
+    right: 8px;
+    width: 8px;
+    height: 13px;
+    background: linear-gradient(225deg, #A8BBA2 0%, #285747 100%);
+    border-radius: 30% 70% 10% 50% / 30% 60% 20% 50%;
+    transform: rotate(32deg);
+    transform-origin: bottom left;
+}
+
+.icon-yoga .lotus-pedestal {
+    position: absolute;
+    bottom: 4px;
+    width: 18px;
+    height: 3px;
+    background: #D8D2C5;
+    border-radius: 2px;
+}
+
+/* 4. Workout Dumbbell Icon */
+.css-art-icon.icon-workout {
+    width: 38px;
+    height: 36px;
+}
+
+.icon-workout .dumbbell-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transform: rotate(-25deg);
+    transition: transform 0.25s ease;
+}
+
+.plan-option:hover .icon-workout .dumbbell-wrap {
+    transform: rotate(0deg) scale(1.08);
+}
+
+.icon-workout .db-handle {
+    width: 13px;
+    height: 4px;
+    background: linear-gradient(180deg, #ECEAE4 0%, #B4AEA2 50%, #7A756C 100%);
+    border-radius: 1px;
+    z-index: 1;
+}
+
+.icon-workout .db-weight-inner {
+    width: 4px;
+    height: 13px;
+    background: linear-gradient(180deg, #285747 0%, #183D32 100%);
+    border-radius: 2px;
+}
+
+.icon-workout .db-weight-outer {
+    width: 5px;
+    height: 18px;
+    background: linear-gradient(180deg, #D97706 0%, #183D32 40%, #102C24 100%);
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(24, 61, 50, 0.25);
+}
+
+/* 5. Both Synergy Crest */
+.css-art-icon.icon-both {
+    width: 38px;
+    height: 36px;
+}
+
+.icon-both .synergy-halo {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%);
+    animation: pulseSoft 2.5s ease-in-out infinite alternate;
+}
+
+.icon-both .synergy-petal-left {
+    position: absolute;
+    left: 8px;
+    width: 11px;
+    height: 17px;
+    background: linear-gradient(180deg, #A8BBA2 0%, #183D32 100%);
+    border-radius: 50% 50% 10% 40% / 60% 60% 20% 30%;
+    transform: rotate(-18deg);
+    opacity: 0.95;
+}
+
+.icon-both .synergy-arc-right {
+    position: absolute;
+    right: 8px;
+    width: 11px;
+    height: 17px;
+    background: linear-gradient(180deg, #F59E0B 0%, #B45309 100%);
+    border-radius: 50% 50% 40% 10% / 60% 60% 30% 20%;
+    transform: rotate(18deg);
+    opacity: 0.95;
+}
+
+.icon-both .synergy-spark {
+    position: absolute;
+    font-size: 12px;
+    color: #FFFFFF;
+    text-shadow: 0 0 6px rgba(245, 158, 11, 0.9);
+    z-index: 3;
+    line-height: 1;
+    transform: translateY(-1px);
+}
+
+/* Keyframes */
+@keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulseSoft {
+    0% { transform: scale(0.96); opacity: 0.85; }
+    100% { transform: scale(1.05); opacity: 1; }
+}

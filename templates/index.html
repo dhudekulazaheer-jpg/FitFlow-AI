@@ -257,13 +257,29 @@
                     <div class="program-format-selector">
                         <label class="format-toggle-btn active" id="formatDailyBtn">
                             <input type="radio" name="program_format" value="daily" checked hidden>
-                            <span class="format-icon">⚡</span>
+                            <div class="css-art-icon icon-daily" aria-hidden="true">
+                                <span class="sun-ring"></span>
+                                <span class="sun-core">
+                                    <span class="bolt-top"></span>
+                                    <span class="bolt-bottom"></span>
+                                </span>
+                            </div>
                             <span class="format-title">Daily Routine</span>
                             <span class="format-desc">Single session</span>
                         </label>
                         <label class="format-toggle-btn" id="formatWeeklyBtn">
                             <input type="radio" name="program_format" value="weekly" hidden>
-                            <span class="format-icon">📅</span>
+                            <div class="css-art-icon icon-weekly" aria-hidden="true">
+                                <div class="cal-top-bar">
+                                    <span class="cal-pin pin-left"></span>
+                                    <span class="cal-pin pin-right"></span>
+                                </div>
+                                <div class="cal-sheet">
+                                    <div class="cal-grid-pips">
+                                        <span></span><span></span><span></span><span></span><span></span><span></span><span class="cal-pip-gold"></span>
+                                    </div>
+                                </div>
+                            </div>
                             <span class="format-title">7-Day Program</span>
                             <span class="format-desc">Complete weekly split</span>
                         </label>
@@ -286,9 +302,15 @@
                                 >
 
                                 <span class="option-card">
-                                    <span class="option-icon">🧘</span>
+                                    <div class="css-art-icon icon-yoga" aria-hidden="true">
+                                        <span class="lotus-halo"></span>
+                                        <span class="lotus-center"></span>
+                                        <span class="lotus-leaf-left"></span>
+                                        <span class="lotus-leaf-right"></span>
+                                        <span class="lotus-pedestal"></span>
+                                    </div>
                                     <strong>Yoga</strong>
-                                    <small>Flexibility & balance</small>
+                                    <small>Flexibility &amp; balance</small>
                                 </span>
                             </label>
 
@@ -301,9 +323,17 @@
                                 >
 
                                 <span class="option-card">
-                                    <span class="option-icon">💪</span>
+                                    <div class="css-art-icon icon-workout" aria-hidden="true">
+                                        <div class="dumbbell-wrap">
+                                            <span class="db-weight-outer left"></span>
+                                            <span class="db-weight-inner left"></span>
+                                            <span class="db-handle"></span>
+                                            <span class="db-weight-inner right"></span>
+                                            <span class="db-weight-outer right"></span>
+                                        </div>
+                                    </div>
                                     <strong>Workout</strong>
-                                    <small>Strength & fitness</small>
+                                    <small>Strength &amp; fitness</small>
                                 </span>
                             </label>
 
@@ -317,7 +347,12 @@
                                 >
 
                                 <span class="option-card">
-                                    <span class="option-icon">⚡</span>
+                                    <div class="css-art-icon icon-both" aria-hidden="true">
+                                        <span class="synergy-halo"></span>
+                                        <span class="synergy-petal-left"></span>
+                                        <span class="synergy-arc-right"></span>
+                                        <span class="synergy-spark">✦</span>
+                                    </div>
                                     <strong>Both</strong>
                                     <small>A complete routine</small>
                                 </span>
