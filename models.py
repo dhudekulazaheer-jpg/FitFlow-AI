@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -165,7 +166,7 @@ class GeneratedPlan(db.Model):
     duration = db.Column(db.Integer, nullable=False)
     equipment = db.Column(db.String(50), nullable=True)
     body_part = db.Column(db.String(50), nullable=True)
-    plan_data = db.Column(db.Text(length=16777215), nullable=False)  # MEDIUMTEXT in MySQL
+    plan_data = db.Column(db.Text().with_variant(MEDIUMTEXT(), "mysql"), nullable=False)
     generated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def get_plan_json(self):

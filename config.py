@@ -69,6 +69,9 @@ if aiven_ca_cert_content and not ssl_ca_path:
     except Exception as e:
         print(f"Warning: Could not write runtime CA certificate file: {e}")
 
+if "postgresql" in DATABASE_URL.lower() and "supabase" in DATABASE_URL.lower():
+    SQLALCHEMY_ENGINE_OPTIONS["connect_args"] = {"sslmode": "require"}
+
 if "mysql" in DATABASE_URL.lower():
     connect_args = {}
     if ssl_ca_path and os.path.exists(ssl_ca_path):
