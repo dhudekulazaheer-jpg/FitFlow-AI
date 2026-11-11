@@ -41,6 +41,7 @@
         <nav class="nav-links">
             <a href="#home">Home</a>
             <a href="#planner">Create Plan</a>
+            <a href="#ai-coach">Yogi Coach</a>
             <a href="#about">About</a>
         </nav>
 
@@ -1088,6 +1089,65 @@
         </section>
 
 
+        <!-- ONLINE RAG AI COACH SECTION -->
+        <section class="rag-coach-section" id="ai-coach">
+            <div class="section-heading">
+                <span class="eyebrow">✦ RETRIEVAL-AUGMENTED GENERATION (RAG)</span>
+                <h2>Ask Your <span>Yogi Coach</span></h2>
+                <p>
+                    Retrieve matching yoga poses and exercises directly from our dataset,
+                    augmented with your biometrics and clinical safety profile via In-Context Learning.
+                </p>
+            </div>
+
+            <div class="rag-coach-card">
+                <form id="ragCoachForm">
+                    <div class="rag-controls-row">
+                        <input
+                            type="text"
+                            id="ragQueryInput"
+                            class="rag-query-input"
+                            placeholder="Ask for a routine or poses (e.g., 20-min gentle yoga flow for lower back stiffness)..."
+                            autocomplete="off"
+                            required
+                        >
+                        <select id="ragFocusFilter" class="rag-focus-select" aria-label="Focus filter">
+                            <option value="all">Yoga &amp; Workout</option>
+                            <option value="yoga">Yoga Only</option>
+                            <option value="workout">Workout Only</option>
+                        </select>
+                        <button type="submit" id="ragSubmitBtn" class="rag-submit-btn">
+                            Generate RAG Guidance ✦
+                        </button>
+                    </div>
+                </form>
+
+                <div class="rag-starter-chips">
+                    <button type="button" class="rag-chip" data-prompt="Suggest 5 gentle yoga poses for lower back stiffness">Lower back yoga relief</button>
+                    <button type="button" class="rag-chip" data-prompt="Bodyweight leg exercises safe for knee pain">Knee-safe leg routine</button>
+                    <button type="button" class="rag-chip" data-prompt="15-minute morning core strengthening and breathing yoga flow">Morning core &amp; breath flow</button>
+                    <button type="button" class="rag-chip" data-prompt="Upper body dumbbell exercises for shoulder stability">Shoulder-safe upper body</button>
+                </div>
+
+                <div id="ragResultsBox" class="rag-results-box" hidden>
+                    <div class="rag-meta-bar">
+                        <span class="rag-status-badge" id="ragStatusBadge">Online RAG + ICL</span>
+                    </div>
+
+                    <div id="ragSafetyAlert" class="rag-safety-alert" hidden></div>
+
+                    <div class="rag-step-label">Step 1 · Retrieved Knowledge Base Documents (Vector Cosine Similarity)</div>
+                    <div id="ragRetrievedGrid" class="rag-retrieved-grid"></div>
+
+                    <div id="ragErrorBox" class="rag-error-box" hidden></div>
+
+                    <div class="rag-step-label">Step 2 · Generated Personalized Routine (In-Context Learning)</div>
+                    <div id="ragGeneratedBody" class="rag-generated-panel"></div>
+                </div>
+            </div>
+        </section>
+
+
         <!-- ABOUT SECTION -->
         <section class="about-section" id="about">
 
@@ -1332,8 +1392,31 @@
     </div>
 
 
+    <!-- FLOATING YOGI COACH BUTTON (PURE HTML & CSS ANIMATION) -->
+    <a href="#ai-coach" class="yogi-fab" id="yogiCoachFab" aria-label="Open Yogi Coach AI  Assistant">
+        <span class="yogi-fab-aura" aria-hidden="true"></span>
+        <span class="yogi-avatar" aria-hidden="true">
+            <span class="yogi-halo"></span>
+            <span class="yogi-figure">
+                <span class="yogi-head"></span>
+                <span class="yogi-torso"></span>
+                <span class="yogi-arm left"></span>
+                <span class="yogi-arm right"></span>
+                <span class="yogi-lotus-legs"></span>
+            </span>
+            <span class="yogi-spark s1"></span>
+            <span class="yogi-spark s2"></span>
+        </span>
+        <span class="yogi-fab-text">
+            <span class="yogi-fab-title">Yogi Coach</span>
+            <span class="yogi-fab-sub">AI  · Ask me</span>
+        </span>
+    </a>
+
+
     <!-- JAVASCRIPT -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/rag.js') }}"></script>
 
 </body>
 </html>

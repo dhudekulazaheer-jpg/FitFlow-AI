@@ -45,6 +45,7 @@ from ml.exercise_swapper import exercise_swapper
 from ml.wellness_companion import get_recovery_nutrition, get_user_analytics
 from ml.program_generator import WeeklyProgramGenerator
 from ml.progression_advisor import get_progression_advice
+from ml.rag_engine import generate_rag_response, get_rag_status
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -1088,6 +1089,60 @@ def send_friend_kudos():
     except Exception as e:
         db.session.rollback()
         return jsonify({"success": False, "error": "Could not send High Five."}), 500
+
+
+@app.route("/api/rag-status", methods=["GET"])
+@login_required
+def rag_status():
+    return jsonify({
+        "success": True,
+        **get_rag_status()
+    })
+
+
+@app.route("/api/rag-coach", methods=["POST"])
+@login_required
+def rag_coach():
+    data = request.get_json(silent=True) or {}
+    query = data.get("query", "")
+    focus_filter = data.get("focus_filter", "all")
+    top_k = data.get("top_k", 5)
+    try:
+        top_k = max(2, min(int(top_k), 8))
+    except (ValueError, TypeError):
+        top_k = 5
+
+    profile_dict = None
+    if current_user.profile:
+        profile_dict = current_user.profile.to_dict()
+
+    saved_assessment = HealthAssessment.query.filter_by(user_id=current_user.id).first()
+    assessment_dict = saved_assessment.to_dict() if saved_assessment else None
+
+    try:
+        result = generate_rag_response(
+            query=query,
+            focus_filter=focus_filter,
+            top_k=top_k,
+            profile=profile_dict,
+            health_assessment=assessment_dict,
+        )
+    except RuntimeError as exc:
+        return jsonify({
+            "success": False,
+            "error": str(exc),
+        }), 502
+
+    if result.get("health_safety_paused") or result.get("paused"):
+        return jsonify(result), 400
+    if result.get("missing_api_key"):
+        return jsonify(result), 503
+    if result.get("upstream_error"):
+        return jsonify(result), 502
+    if not result.get("success"):
+        return jsonify(result), 400
+
+    return jsonify(result)
 
 
 # =========================================
