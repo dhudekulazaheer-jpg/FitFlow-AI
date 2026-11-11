@@ -7,5 +7,6 @@ Flask-SQLAlchemy
 Flask-Login
 Flask-WTF
 PyMySQL
+cryptography
 gunicorn
 python-dotenv

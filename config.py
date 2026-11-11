@@ -34,11 +34,20 @@ if not DATABASE_URL:
     else:
         DATABASE_URL = f"sqlite:///{BASE_DIR / 'fitflow_ai.db'}"
 
-# Normalize URL prefixes
+# Normalize URL prefixes and strip unsupported PyMySQL query parameters (e.g., ?ssl-mode=REQUIRED)
 if DATABASE_URL.startswith("mysql://"):
     DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
 elif DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+if "mysql+pymysql://" in DATABASE_URL.lower() and "?" in DATABASE_URL:
+    from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+    parsed = urlparse(DATABASE_URL)
+    qs = parse_qs(parsed.query, keep_blank_values=True)
+    for bad_key in ("ssl-mode", "ssl_mode", "sslmode"):
+        qs.pop(bad_key, None)
+    clean_query = urlencode(qs, doseq=True)
+    DATABASE_URL = urlunparse(parsed._replace(query=clean_query))
 
 # Configure SQLAlchemy Engine & SSL options (crucial for Aiven MySQL)
 SQLALCHEMY_ENGINE_OPTIONS = {
@@ -55,7 +64,7 @@ if aiven_ca_cert_content and not ssl_ca_path:
     ca_file = BASE_DIR / "aiven_ca.pem"
     try:
         with open(ca_file, "w", encoding="utf-8") as f:
-            f.write(aiven_ca_cert_content.strip())
+            f.write(aiven_ca_cert_content.replace("\\n", "\n").strip())
         ssl_ca_path = str(ca_file)
     except Exception as e:
         print(f"Warning: Could not write runtime CA certificate file: {e}")
