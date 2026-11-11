@@ -10,4 +10,4 @@ PyMySQL
 cryptography
 gunicorn
 python-dotenv
-psycopg2-binary
+psycopg[binary]
